@@ -2,13 +2,15 @@
 
 ## Started working on Kazi Sasa project
 ### Implemented the registration
-#### Created a database containing;
+#### Created a database containing the following columns;
 - Username
 - Password
 - Date of birth
 - Phone Number
 - First and last names
 - Gender
+### Migrated the changes using:
+    php artisan migrate
 ### Implemented the login
 
 
