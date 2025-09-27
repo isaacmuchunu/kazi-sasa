@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(composer update:*)",
+      "Bash(composer install:*)",
+      "Bash(composer:*)",
+      "Bash(php artisan:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run build:*)",
+      "Read(//d/job/jovie/**)",
+      "mcp__laravel-boost__application-info",
+      "Bash(mkdir:*)",
+      "mcp__laravel-boost__database-schema",
+      "Bash(npm run dev:*)",
+      "mcp__laravel-boost__get-absolute-url",
+      "mcp__laravel-boost__browser-logs"
+    ],
+    "deny": [],
+    "ask": []
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "laravel-boost"
+  ]
+}
