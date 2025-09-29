@@ -80,17 +80,21 @@ class Job extends Model
         return $query->where('is_urgent', true);
     }
 
-    // Accessors
+    /**
+     * Get the formatted salary range for the job.
+     */
     public function getSalaryRangeAttribute()
     {
-        if ($this->salary_min && $this->salary_max) {
-            return '$' . number_format($this->salary_min) . ' - $' . number_format($this->salary_max) . ' per ' . $this->salary_period;
+        if (!$this->salary_min && !$this->salary_max) {
+            return 'Salary not disclosed';
         }
-        return 'Salary not specified';
-    }
 
-    public function getIsExpiredAttribute()
-    {
-        return $this->apply_deadline && $this->apply_deadline->isPast();
+        if ($this->salary_min && $this->salary_max) {
+            return number_format($this->salary_min) . ' - ' . number_format($this->salary_max) . ' ' . ucfirst($this->salary_period);
+        } elseif ($this->salary_min) {
+            return 'From ' . number_format($this->salary_min) . ' ' . ucfirst($this->salary_period);
+        } else {
+            return 'Up to ' . number_format($this->salary_max) . ' ' . ucfirst($this->salary_period);
+        }
     }
 }

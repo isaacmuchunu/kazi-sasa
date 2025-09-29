@@ -5,18 +5,20 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class SavedJob extends Model
+class JobApplication extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'job_id',
         'user_id',
-        'saved_at',
+        'applied_at',
+        'status',
+        'cover_letter',
     ];
 
     protected $casts = [
-        'saved_at' => 'datetime',
+        'applied_at' => 'datetime',
     ];
 
     public function job()

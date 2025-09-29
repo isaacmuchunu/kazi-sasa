@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 
 class JobCategory extends Model
 {
@@ -25,19 +24,5 @@ class JobCategory extends Model
     public function jobs()
     {
         return $this->hasMany(Job::class);
-    }
-
-    // Mutators
-    public function setNameAttribute($value)
-    {
-        $this->attributes['name'] = $value;
-        $this->attributes['slug'] = Str::slug($value);
-    }
-
-    // Update job count when jobs are added/removed
-    public function updateJobCount()
-    {
-        $this->job_count = $this->jobs()->where('status', 'active')->count();
-        $this->save();
     }
 }

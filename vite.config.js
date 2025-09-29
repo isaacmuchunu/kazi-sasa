@@ -11,18 +11,11 @@ export default defineConfig({
             ],
             refresh: true,
         }),
-        react({
-            jsxRuntime: 'automatic',
-        }),
+        react(),
     ],
     resolve: {
         alias: {
             '@': '/resources/js',
         },
-    },
-    esbuild: {
-        loader: 'jsx',
-        include: /src\/.*\.[jt]sx?$/,
-        exclude: [],
     },
 });

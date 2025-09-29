@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Job;
-use App\Company;
-use App\JobCategory;
-use App\Blog;
-use App\Newsletter;
+use App\Models\Job;
+use App\Models\Company;
+use App\Models\JobCategory;
+use App\Models\Blog;
+use App\Models\Newsletter;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -36,7 +36,7 @@ class HomeController extends Controller
                         'name' => $job->company->name,
                         'logo' => $job->company->logo,
                     ],
-                    'category' => $job->jobCategory->slug ?? 'general',
+                    'category' => $job->category->name ?? 'General',
                 ];
             });
 
@@ -87,14 +87,14 @@ class HomeController extends Controller
                     ],
                     'published_at' => $blog->published_at->toDateString(),
                     'reading_time' => $this->calculateReadingTime($blog->content),
-                    'category' => $blog->category,
+                    // 'category' => $blog->category, // Commented out since category field doesn't exist
                 ];
             });
 
         $stats = [
             'totalJobs' => Job::active()->count(),
             'totalCompanies' => Company::count(),
-            'totalCandidates' => \App\User::where('user_type', 'candidate')->count(),
+            'totalCandidates' => \App\Models\User::where('user_type', 'candidate')->count(),
             'successRate' => 95, // This could be calculated based on actual data
         ];
 

@@ -2,13 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use App\Models\Job;
+use App\Models\JobCategory;
+use App\Models\Company;
+use App\Models\JobApplication;
+use App\Models\SavedJob;
 
 class JobController extends Controller
 {
     /**
      * Display a listing of jobs.
+     * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
     {
@@ -20,26 +24,26 @@ class JobController extends Controller
      */
     public function list(Request $request)
     {
-        // For now, we'll use sample data since there's no Job model yet
-        // In a real application, you would query the database like this:
-        // $jobs = Job::query()
-        //     ->when($request->search, function ($query, $search) {
-        //         $query->where('title', 'like', "%{$search}%")
-        //               ->orWhere('description', 'like', "%{$search}%");
-        //     })
-        //     ->when($request->location, function ($query, $location) {
-        //         $query->where('location', 'like', "%{$location}%");
-        //     })
-        //     ->when($request->type, function ($query, $type) {
-        //         $query->where('type', $type);
-        //     })
-        //     ->when($request->category, function ($query, $category) {
-        //         $query->where('category', $category);
-        //     })
-        //     ->latest()
-        //     ->paginate(10);
-
-        $jobs = collect(); // Empty collection for now
+        $jobs = Job::query()
+            ->with(['company', 'category'])
+            ->when($request->search, function ($query, $search) {
+                $query->where('title', 'like', "%{$search}%")
+                      ->orWhere('description', 'like', "%{$search}%");
+            })
+            ->when($request->location, function ($query, $location) {
+                $query->where('location', 'like', "%{$location}%");
+            })
+            ->when($request->type, function ($query, $type) {
+                $query->where('job_type', $type);
+            })
+            ->when($request->category, function ($query, $category) {
+                $query->whereHas('category', function($q) use ($category) {
+                    $q->where('name', $category);
+                });
+            })
+            ->where('status', 'active')
+            ->latest()
+            ->paginate(10);
 
         return view('jobs.list', compact('jobs'));
     }
@@ -49,8 +53,26 @@ class JobController extends Controller
      */
     public function grid(Request $request)
     {
-        // For now, we'll use sample data since there's no Job model yet
-        $jobs = collect(); // Empty collection for now
+        $jobs = Job::query()
+            ->with(['company', 'category'])
+            ->when($request->search, function ($query, $search) {
+                $query->where('title', 'like', "%{$search}%")
+                      ->orWhere('description', 'like', "%{$search}%");
+            })
+            ->when($request->location, function ($query, $location) {
+                $query->where('location', 'like', "%{$location}%");
+            })
+            ->when($request->type, function ($query, $type) {
+                $query->where('job_type', $type);
+            })
+            ->when($request->category, function ($query, $category) {
+                $query->whereHas('category', function($q) use ($category) {
+                    $q->where('name', $category);
+                });
+            })
+            ->where('status', 'active')
+            ->latest()
+            ->paginate(12);
 
         return view('jobs.grid', compact('jobs'));
     }
@@ -60,35 +82,10 @@ class JobController extends Controller
      */
     public function show($id)
     {
-        // For now, we'll use sample data since there's no Job model yet
-        // In a real application, you would do:
-        // $job = Job::findOrFail($id);
+        $job = Job::with(['company', 'category'])->findOrFail($id);
 
-        $job = (object) [
-            'id' => $id,
-            'title' => 'Web Designer, Graphic Designer, UI/UX Designer',
-            'company_name' => 'Tourt Design LTD',
-            'company_logo' => 'https://via.placeholder.com/80x80/3b82f6/ffffff?text=TD',
-            'location' => 'Wellesley Rd, London',
-            'category' => 'Accountancy',
-            'employment_type' => 'Freelance',
-            'type' => 'Full Time',
-            'salary_range' => '$35,000-$38,000',
-            'experience' => '2 Years',
-            'language' => 'English',
-            'contact_email' => 'hello@company.com',
-            'company_website' => 'www.company.com',
-            'deadline' => now()->addDays(30),
-            'description' => '<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into essentially unchanged.</p><p>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don\'t look even slightly believable.</p>',
-            'requirements' => null,
-            'skills' => ['Web Design', 'UI/UX', 'Photoshop', 'Figma'],
-            'posted_by_name' => 'John Doe',
-            'posted_by_title' => 'CEO of Tourt Design LTD',
-            'posted_by_avatar' => 'https://via.placeholder.com/80x80/667eea/ffffff?text=JD',
-            'latitude' => 40.697670063539654,
-            'longitude' => -74.25987556253516,
-            'created_at' => now()->subDays(5)
-        ];
+        // Increment view count
+        $job->increment('views_count');
 
         return view('jobs.show', compact('job'));
     }
@@ -110,18 +107,35 @@ class JobController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'location' => 'required|string|max:255',
-            'salary_range' => 'nullable|string|max:255',
-            'type' => 'required|in:full-time,part-time,contract,freelance',
-            'category' => 'required|string|max:255',
-            'experience' => 'nullable|string|max:255',
-            'deadline' => 'required|date|after:today',
+            'job_type' => 'required|in:full-time,part-time,freelance,contract',
+            'experience_level' => 'required|in:entry,mid,senior,executive',
+            'salary_min' => 'nullable|numeric|min:0',
+            'salary_max' => 'nullable|numeric|min:0',
+            'salary_period' => 'required|in:monthly,yearly,hourly',
+            'apply_deadline' => 'required|date|after:today',
+            'job_category_id' => 'required|exists:job_categories,id',
+            'skills_required' => 'nullable|array',
+            'tags' => 'nullable|array',
         ]);
 
-        // For now, just redirect back with success message
-        // In a real application, you would create the job:
-        // $job = Job::create($request->all());
+        $job = Job::create([
+            'title' => $request->title,
+            'slug' => \Str::slug($request->title),
+            'company_id' => auth()->id(), // Assuming the user is the company owner
+            'job_category_id' => $request->job_category_id,
+            'description' => $request->description,
+            'location' => $request->location,
+            'job_type' => $request->job_type,
+            'experience_level' => $request->experience_level,
+            'salary_min' => $request->salary_min,
+            'salary_max' => $request->salary_max,
+            'salary_period' => $request->salary_period,
+            'apply_deadline' => $request->apply_deadline,
+            'skills_required' => $request->skills_required,
+            'tags' => $request->tags,
+        ]);
 
-        return redirect()->route('jobs.list')->with('success', 'Job posted successfully!');
+        return redirect()->route('jobs.show', $job)->with('success', 'Job posted successfully!');
     }
 
     /**
@@ -129,18 +143,12 @@ class JobController extends Controller
      */
     public function edit($id)
     {
-        // For now, we'll use sample data
-        $job = (object) [
-            'id' => $id,
-            'title' => 'Web Designer, Graphic Designer, UI/UX Designer',
-            'description' => 'Lorem ipsum dolor sit amet...',
-            'location' => 'Wellesley Rd, London',
-            'salary_range' => '$35,000-$38,000',
-            'type' => 'full-time',
-            'category' => 'Design',
-            'experience' => '2 Years',
-            'deadline' => now()->addDays(30)->format('Y-m-d'),
-        ];
+        $job = Job::findOrFail($id);
+
+        // Check if user owns this job
+        if ($job->company_id !== auth()->id()) {
+            abort(403);
+        }
 
         return view('jobs.edit', compact('job'));
     }
@@ -150,23 +158,45 @@ class JobController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $job = Job::findOrFail($id);
+
+        // Check if user owns this job
+        if ($job->company_id !== auth()->id()) {
+            abort(403);
+        }
+
         $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'location' => 'required|string|max:255',
-            'salary_range' => 'nullable|string|max:255',
-            'type' => 'required|in:full-time,part-time,contract,freelance',
-            'category' => 'required|string|max:255',
-            'experience' => 'nullable|string|max:255',
-            'deadline' => 'required|date|after:today',
+            'job_type' => 'required|in:full-time,part-time,freelance,contract',
+            'experience_level' => 'required|in:entry,mid,senior,executive',
+            'salary_min' => 'nullable|numeric|min:0',
+            'salary_max' => 'nullable|numeric|min:0',
+            'salary_period' => 'required|in:monthly,yearly,hourly',
+            'apply_deadline' => 'required|date|after:today',
+            'job_category_id' => 'required|exists:job_categories,id',
+            'skills_required' => 'nullable|array',
+            'tags' => 'nullable|array',
         ]);
 
-        // For now, just redirect back with success message
-        // In a real application, you would update the job:
-        // $job = Job::findOrFail($id);
-        // $job->update($request->all());
+        $job->update([
+            'title' => $request->title,
+            'slug' => \Str::slug($request->title),
+            'job_category_id' => $request->job_category_id,
+            'description' => $request->description,
+            'location' => $request->location,
+            'job_type' => $request->job_type,
+            'experience_level' => $request->experience_level,
+            'salary_min' => $request->salary_min,
+            'salary_max' => $request->salary_max,
+            'salary_period' => $request->salary_period,
+            'apply_deadline' => $request->apply_deadline,
+            'skills_required' => $request->skills_required,
+            'tags' => $request->tags,
+        ]);
 
-        return redirect()->route('jobs.show', $id)->with('success', 'Job updated successfully!');
+        return redirect()->route('jobs.show', $job)->with('success', 'Job updated successfully!');
     }
 
     /**
@@ -174,10 +204,14 @@ class JobController extends Controller
      */
     public function destroy($id)
     {
-        // For now, just redirect back with success message
-        // In a real application, you would delete the job:
-        // $job = Job::findOrFail($id);
-        // $job->delete();
+        $job = Job::findOrFail($id);
+
+        // Check if user owns this job
+        if ($job->company_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $job->delete();
 
         return redirect()->route('jobs.list')->with('success', 'Job deleted successfully!');
     }
@@ -187,11 +221,30 @@ class JobController extends Controller
      */
     public function apply($id)
     {
-        // For now, just redirect back with success message
-        // In a real application, you would:
-        // 1. Check if user hasn't already applied
-        // 2. Create a job application record
-        // 3. Send notification to employer
+        $job = Job::findOrFail($id);
+
+        // Check if job is still active
+        if ($job->status !== 'active') {
+            return redirect()->back()->with('error', 'This job is no longer accepting applications.');
+        }
+
+        // Check if user has already applied
+        $existingApplication = JobApplication::where('job_id', $id)
+            ->where('user_id', auth()->id())
+            ->first();
+
+        if ($existingApplication) {
+            return redirect()->back()->with('error', 'You have already applied for this job.');
+        }
+
+        JobApplication::create([
+            'job_id' => $id,
+            'user_id' => auth()->id(),
+            'applied_at' => now(),
+        ]);
+
+        // Increment application count
+        $job->increment('applications_count');
 
         return redirect()->route('jobs.show', $id)->with('success', 'Application submitted successfully!');
     }
@@ -201,10 +254,22 @@ class JobController extends Controller
      */
     public function save($id)
     {
-        // For now, just redirect back with success message
-        // In a real application, you would:
-        // 1. Check if job isn't already saved
-        // 2. Create a saved job record
+        $job = Job::findOrFail($id);
+
+        // Check if job isn't already saved
+        $existingSavedJob = SavedJob::where('job_id', $id)
+            ->where('user_id', auth()->id())
+            ->first();
+
+        if ($existingSavedJob) {
+            return redirect()->back()->with('error', 'Job is already saved.');
+        }
+
+        SavedJob::create([
+            'job_id' => $id,
+            'user_id' => auth()->id(),
+            'saved_at' => now(),
+        ]);
 
         return redirect()->back()->with('success', 'Job saved successfully!');
     }
@@ -214,13 +279,18 @@ class JobController extends Controller
      */
     public function unsave($id)
     {
-        // For now, just redirect back with success message
-        // In a real application, you would:
-        // 1. Find and delete the saved job record
+        $savedJob = SavedJob::where('job_id', $id)
+            ->where('user_id', auth()->id())
+            ->first();
+
+        if (!$savedJob) {
+            return redirect()->back()->with('error', 'Job was not saved.');
+        }
+
+        $savedJob->delete();
 
         return redirect()->back()->with('success', 'Job removed from saved jobs!');
     }
-
     /**
      * Search jobs.
      */
@@ -243,12 +313,19 @@ class JobController extends Controller
      */
     public function apiSearch(Request $request)
     {
-        // For now, return empty results
-        // In a real application, you would search jobs and return JSON
+        $jobs = Job::query()
+            ->with(['company', 'category'])
+            ->when($request->search, function ($query, $search) {
+                $query->where('title', 'like', "%{$search}%")
+                      ->orWhere('description', 'like', "%{$search}%");
+            })
+            ->where('status', 'active')
+            ->limit(20)
+            ->get();
 
         return response()->json([
-            'jobs' => [],
-            'total' => 0
+            'jobs' => $jobs,
+            'total' => $jobs->count()
         ]);
     }
 

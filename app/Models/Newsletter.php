@@ -19,15 +19,4 @@ class Newsletter extends Model
         'subscribed_at' => 'datetime',
         'is_active' => 'boolean',
     ];
-
-    // Scopes
-    public function scopeSubscribed($query)
-    {
-        return $query->where('is_active', false);
-    }
-
-    public function scopeUnsubscribed($query)
-    {
-        return $query->where('is_subscribed', false);
-    }
 }

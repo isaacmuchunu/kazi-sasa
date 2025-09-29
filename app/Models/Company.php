@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 
 class Company extends Model
 {
@@ -35,18 +34,5 @@ class Company extends Model
     public function jobs()
     {
         return $this->hasMany(Job::class);
-    }
-
-    // Mutators
-    public function setNameAttribute($value)
-    {
-        $this->attributes['name'] = $value;
-        $this->attributes['slug'] = Str::slug($value);
-    }
-
-    // Accessors
-    public function getJobsCountAttribute()
-    {
-        return $this->jobs()->where('status', 'active')->count();
     }
 }

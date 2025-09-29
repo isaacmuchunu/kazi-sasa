@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 
 class Blog extends Model
 {
@@ -20,36 +19,23 @@ class Blog extends Model
         'status',
         'published_at',
         'views_count',
-        'tags',
     ];
 
     protected $casts = [
         'published_at' => 'datetime',
         'views_count' => 'integer',
-        'tags' => 'array',
     ];
 
-    // Relationships
     public function author()
     {
         return $this->belongsTo(User::class, 'author_id');
     }
 
-    // Mutators
-    public function setTitleAttribute($value)
-    {
-        $this->attributes['title'] = $value;
-        $this->attributes['slug'] = Str::slug($value);
-    }
-
-    // Scopes
+    /**
+     * Scope a query to only include published blogs.
+     */
     public function scopePublished($query)
     {
         return $query->where('status', 'published');
     }
-
-    public function scopeDraft($query)
-    {
-        return $query->where('status', 'draft');
-    }
-}
+};

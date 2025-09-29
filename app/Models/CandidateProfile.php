@@ -20,7 +20,6 @@ class CandidateProfile extends Model
         'linkedin_url',
         'github_url',
         'is_public',
-        'available_for_hire'
     ];
 
     protected $casts = [
@@ -29,7 +28,6 @@ class CandidateProfile extends Model
         'education' => 'array',
         'certifications' => 'array',
         'is_public' => 'boolean',
-        'available_for_hire' => 'boolean',
     ];
 
     public function user()

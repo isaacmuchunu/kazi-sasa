@@ -1,12 +1,43 @@
+# Dependencies
 /node_modules
+/vendor
+
+# Laravel
 /public/hot
 /public/storage
+/public/build
 /storage/*.key
-/vendor
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+/storage/logs/*
+
+# Environment files
 .env
 .env.backup
+.env.production
+
+# IDE and Editor files
+.idea
+.vscode
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Testing
 .phpunit.result.cache
-Homestead.json
-Homestead.yaml
+coverage
+
+# Build artifacts
 npm-debug.log
 yarn-error.log
+/public/mix-manifest.json
+
+# Homestead
+Homestead.json
+Homestead.yaml
+
+# OS files
+Thumbs.db
+.DS_Store
