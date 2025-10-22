@@ -4,18 +4,26 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
     plugins: [
+        react({
+            fastRefresh: false,
+            jsxRuntime: 'classic',
+            include: /\.(jsx|js)$/
+        }),
         laravel({
             input: [
                 'resources/css/app.css',
-                'resources/js/app.jsx'
+                'resources/src/index.jsx'
             ],
-            refresh: true,
+            refresh: false,
         }),
-        react(),
     ],
     resolve: {
         alias: {
-            '@': '/resources/js',
+            '@': '/resources/src',
+            '/assets': '/public/assets',
         },
     },
+    server: {
+        hmr: false
+    }
 });

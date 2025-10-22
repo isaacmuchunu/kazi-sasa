@@ -1,379 +1,124 @@
 {
-  "_AppLayout-Bnqh_oc0.js": {
-    "file": "assets/AppLayout-Bnqh_oc0.js",
-    "name": "AppLayout",
+  "_BriefcaseIcon-b8lqYzG9.js": {
+    "file": "assets/BriefcaseIcon-b8lqYzG9.js",
+    "name": "BriefcaseIcon",
     "imports": [
-      "resources/js/app.jsx"
+      "resources/src/index.jsx"
     ]
   },
-  "_formatDistanceToNow-BIWrupWh.js": {
-    "file": "assets/formatDistanceToNow-BIWrupWh.js",
-    "name": "formatDistanceToNow"
+  "_ClockIcon-DlThbMWZ.js": {
+    "file": "assets/ClockIcon-DlThbMWZ.js",
+    "name": "ClockIcon",
+    "imports": [
+      "resources/src/index.jsx"
+    ]
+  },
+  "_EyeIcon-Ce0w4tf4.js": {
+    "file": "assets/EyeIcon-Ce0w4tf4.js",
+    "name": "EyeIcon",
+    "imports": [
+      "resources/src/index.jsx"
+    ]
+  },
+  "_XCircleIcon-Chesx2Pn.js": {
+    "file": "assets/XCircleIcon-Chesx2Pn.js",
+    "name": "XCircleIcon",
+    "imports": [
+      "resources/src/index.jsx"
+    ]
+  },
+  "_useDashboardStats-CY67Pkca.js": {
+    "file": "assets/useDashboardStats-CY67Pkca.js",
+    "name": "useDashboardStats",
+    "imports": [
+      "resources/src/index.jsx"
+    ]
+  },
+  "_userService-CcL6DIW3.js": {
+    "file": "assets/userService-CcL6DIW3.js",
+    "name": "userService",
+    "imports": [
+      "resources/src/index.jsx"
+    ]
   },
   "resources/css/app.css": {
-    "file": "assets/app-BYh8R7FA.css",
+    "file": "assets/app-D9ytP5jI.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "names": [
       "app.css"
     ]
   },
-  "resources/js/Pages/About.jsx": {
-    "file": "assets/About-BK9CEqZd.js",
-    "name": "About",
-    "src": "resources/js/Pages/About.jsx",
-    "isDynamicEntry": true,
-    "imports": [
-      "resources/js/app.jsx",
-      "_AppLayout-Bnqh_oc0.js"
-    ]
-  },
-  "resources/js/Pages/Account/AppliedJobs.jsx": {
-    "file": "assets/AppliedJobs-FReuQ5k9.js",
-    "name": "AppliedJobs",
-    "src": "resources/js/Pages/Account/AppliedJobs.jsx",
-    "isDynamicEntry": true,
-    "imports": [
-      "resources/js/app.jsx",
-      "_AppLayout-Bnqh_oc0.js",
-      "_formatDistanceToNow-BIWrupWh.js"
-    ]
-  },
-  "resources/js/Pages/Account/ChangePassword.jsx": {
-    "file": "assets/ChangePassword-CW9LReHg.js",
-    "name": "ChangePassword",
-    "src": "resources/js/Pages/Account/ChangePassword.jsx",
-    "isDynamicEntry": true,
-    "imports": [
-      "resources/js/app.jsx",
-      "_AppLayout-Bnqh_oc0.js"
-    ]
-  },
-  "resources/js/Pages/Account/Index.jsx": {
-    "file": "assets/Index-cbb6rEoU.js",
-    "name": "Index",
-    "src": "resources/js/Pages/Account/Index.jsx",
-    "isDynamicEntry": true,
-    "imports": [
-      "resources/js/app.jsx",
-      "_AppLayout-Bnqh_oc0.js"
-    ]
-  },
-  "resources/js/Pages/Account/Messages.jsx": {
-    "file": "assets/Messages-PQzB5d6U.js",
-    "name": "Messages",
-    "src": "resources/js/Pages/Account/Messages.jsx",
-    "isDynamicEntry": true,
-    "imports": [
-      "resources/js/app.jsx",
-      "_AppLayout-Bnqh_oc0.js",
-      "_formatDistanceToNow-BIWrupWh.js"
-    ]
-  },
-  "resources/js/Pages/Account/Profile.jsx": {
-    "file": "assets/Profile-DTU1Rux1.js",
-    "name": "Profile",
-    "src": "resources/js/Pages/Account/Profile.jsx",
-    "isDynamicEntry": true,
-    "imports": [
-      "resources/js/app.jsx",
-      "_AppLayout-Bnqh_oc0.js"
-    ]
-  },
-  "resources/js/Pages/Account/Resume.jsx": {
-    "file": "assets/Resume-BXhRrmOd.js",
-    "name": "Resume",
-    "src": "resources/js/Pages/Account/Resume.jsx",
-    "isDynamicEntry": true,
-    "imports": [
-      "resources/js/app.jsx",
-      "_AppLayout-Bnqh_oc0.js",
-      "_formatDistanceToNow-BIWrupWh.js"
-    ]
-  },
-  "resources/js/Pages/Account/SavedJobs.jsx": {
-    "file": "assets/SavedJobs-CYlgEo3O.js",
-    "name": "SavedJobs",
-    "src": "resources/js/Pages/Account/SavedJobs.jsx",
-    "isDynamicEntry": true,
-    "imports": [
-      "resources/js/app.jsx",
-      "_AppLayout-Bnqh_oc0.js",
-      "_formatDistanceToNow-BIWrupWh.js"
-    ]
-  },
-  "resources/js/Pages/Auth/Login.jsx": {
-    "file": "assets/Login-DDmTfYvb.js",
-    "name": "Login",
-    "src": "resources/js/Pages/Auth/Login.jsx",
-    "isDynamicEntry": true,
-    "imports": [
-      "resources/js/app.jsx",
-      "_AppLayout-Bnqh_oc0.js"
-    ]
-  },
-  "resources/js/Pages/Auth/Register.jsx": {
-    "file": "assets/Register-DiE4z_Bo.js",
-    "name": "Register",
-    "src": "resources/js/Pages/Auth/Register.jsx",
-    "isDynamicEntry": true,
-    "imports": [
-      "resources/js/app.jsx",
-      "_AppLayout-Bnqh_oc0.js"
-    ]
-  },
-  "resources/js/Pages/Blog/Index.jsx": {
-    "file": "assets/Index-DV69C_gH.js",
-    "name": "Index",
-    "src": "resources/js/Pages/Blog/Index.jsx",
-    "isDynamicEntry": true,
-    "imports": [
-      "resources/js/app.jsx",
-      "_AppLayout-Bnqh_oc0.js"
-    ]
-  },
-  "resources/js/Pages/Blog/Show.jsx": {
-    "file": "assets/Show-Dc50F2cM.js",
-    "name": "Show",
-    "src": "resources/js/Pages/Blog/Show.jsx",
-    "isDynamicEntry": true,
-    "imports": [
-      "resources/js/app.jsx",
-      "_AppLayout-Bnqh_oc0.js"
-    ]
-  },
-  "resources/js/Pages/Blog/StyleTwo.jsx": {
-    "file": "assets/StyleTwo-6KQmUAFM.js",
-    "name": "StyleTwo",
-    "src": "resources/js/Pages/Blog/StyleTwo.jsx",
-    "isDynamicEntry": true,
-    "imports": [
-      "resources/js/app.jsx",
-      "_AppLayout-Bnqh_oc0.js"
-    ]
-  },
-  "resources/js/Pages/Candidates/Index.jsx": {
-    "file": "assets/Index-DGieKaTI.js",
-    "name": "Index",
-    "src": "resources/js/Pages/Candidates/Index.jsx",
-    "isDynamicEntry": true,
-    "imports": [
-      "resources/js/app.jsx",
-      "_AppLayout-Bnqh_oc0.js"
-    ]
-  },
-  "resources/js/Pages/Candidates/Show.jsx": {
-    "file": "assets/Show-DDDvlFdX.js",
-    "name": "Show",
-    "src": "resources/js/Pages/Candidates/Show.jsx",
-    "isDynamicEntry": true,
-    "imports": [
-      "resources/js/app.jsx",
-      "_AppLayout-Bnqh_oc0.js",
-      "_formatDistanceToNow-BIWrupWh.js"
-    ]
-  },
-  "resources/js/Pages/Categories.jsx": {
-    "file": "assets/Categories-Wd1qnxf-.js",
-    "name": "Categories",
-    "src": "resources/js/Pages/Categories.jsx",
-    "isDynamicEntry": true,
-    "imports": [
-      "resources/js/app.jsx",
-      "_AppLayout-Bnqh_oc0.js"
-    ]
-  },
-  "resources/js/Pages/Companies/Index.jsx": {
-    "file": "assets/Index-DEyXI6-U.js",
-    "name": "Index",
-    "src": "resources/js/Pages/Companies/Index.jsx",
-    "isDynamicEntry": true,
-    "imports": [
-      "resources/js/app.jsx",
-      "_AppLayout-Bnqh_oc0.js"
-    ]
-  },
-  "resources/js/Pages/Companies/Show.jsx": {
-    "file": "assets/Show-CXKnE151.js",
-    "name": "Show",
-    "src": "resources/js/Pages/Companies/Show.jsx",
-    "isDynamicEntry": true,
-    "imports": [
-      "resources/js/app.jsx",
-      "_AppLayout-Bnqh_oc0.js",
-      "_formatDistanceToNow-BIWrupWh.js"
-    ]
-  },
-  "resources/js/Pages/Contact.jsx": {
-    "file": "assets/Contact-DBL53K9F.js",
-    "name": "Contact",
-    "src": "resources/js/Pages/Contact.jsx",
-    "isDynamicEntry": true,
-    "imports": [
-      "resources/js/app.jsx",
-      "_AppLayout-Bnqh_oc0.js"
-    ]
-  },
-  "resources/js/Pages/FAQ.jsx": {
-    "file": "assets/FAQ-BpISczjy.js",
-    "name": "FAQ",
-    "src": "resources/js/Pages/FAQ.jsx",
-    "isDynamicEntry": true,
-    "imports": [
-      "resources/js/app.jsx",
-      "_AppLayout-Bnqh_oc0.js"
-    ]
-  },
-  "resources/js/Pages/Home.jsx": {
-    "file": "assets/Home-D1ChOs4H.js",
-    "name": "Home",
-    "src": "resources/js/Pages/Home.jsx",
-    "isDynamicEntry": true,
-    "imports": [
-      "resources/js/app.jsx",
-      "_AppLayout-Bnqh_oc0.js"
-    ]
-  },
-  "resources/js/Pages/Jobs/Create.jsx": {
-    "file": "assets/Create-Bizz0qZH.js",
-    "name": "Create",
-    "src": "resources/js/Pages/Jobs/Create.jsx",
-    "isDynamicEntry": true,
-    "imports": [
-      "resources/js/app.jsx",
-      "_AppLayout-Bnqh_oc0.js"
-    ]
-  },
-  "resources/js/Pages/Jobs/Edit.jsx": {
-    "file": "assets/Edit-D5e6jsUz.js",
-    "name": "Edit",
-    "src": "resources/js/Pages/Jobs/Edit.jsx",
-    "isDynamicEntry": true,
-    "imports": [
-      "resources/js/app.jsx",
-      "_AppLayout-Bnqh_oc0.js"
-    ]
-  },
-  "resources/js/Pages/Jobs/Grid.jsx": {
-    "file": "assets/Grid-Cgk07uDu.js",
-    "name": "Grid",
-    "src": "resources/js/Pages/Jobs/Grid.jsx",
-    "isDynamicEntry": true,
-    "imports": [
-      "resources/js/app.jsx",
-      "_AppLayout-Bnqh_oc0.js",
-      "_formatDistanceToNow-BIWrupWh.js"
-    ]
-  },
-  "resources/js/Pages/Jobs/Index.jsx": {
-    "file": "assets/Index-BI8Ng-3I.js",
-    "name": "Index",
-    "src": "resources/js/Pages/Jobs/Index.jsx",
-    "isDynamicEntry": true,
-    "imports": [
-      "resources/js/app.jsx",
-      "_AppLayout-Bnqh_oc0.js"
-    ]
-  },
-  "resources/js/Pages/Jobs/List.jsx": {
-    "file": "assets/List-Gem2DxUB.js",
-    "name": "List",
-    "src": "resources/js/Pages/Jobs/List.jsx",
-    "isDynamicEntry": true,
-    "imports": [
-      "resources/js/app.jsx",
-      "_AppLayout-Bnqh_oc0.js",
-      "_formatDistanceToNow-BIWrupWh.js"
-    ]
-  },
-  "resources/js/Pages/Jobs/Show.jsx": {
-    "file": "assets/Show-BhZ55InB.js",
-    "name": "Show",
-    "src": "resources/js/Pages/Jobs/Show.jsx",
-    "isDynamicEntry": true,
-    "imports": [
-      "resources/js/app.jsx",
-      "_AppLayout-Bnqh_oc0.js",
-      "_formatDistanceToNow-BIWrupWh.js"
-    ]
-  },
-  "resources/js/Pages/Pricing.jsx": {
-    "file": "assets/Pricing-CyX6mTBE.js",
-    "name": "Pricing",
-    "src": "resources/js/Pages/Pricing.jsx",
-    "isDynamicEntry": true,
-    "imports": [
-      "resources/js/app.jsx",
-      "_AppLayout-Bnqh_oc0.js"
-    ]
-  },
-  "resources/js/Pages/PrivacyPolicy.jsx": {
-    "file": "assets/PrivacyPolicy-BOxj68Zi.js",
-    "name": "PrivacyPolicy",
-    "src": "resources/js/Pages/PrivacyPolicy.jsx",
-    "isDynamicEntry": true,
-    "imports": [
-      "resources/js/app.jsx",
-      "_AppLayout-Bnqh_oc0.js"
-    ]
-  },
-  "resources/js/Pages/TermsConditions.jsx": {
-    "file": "assets/TermsConditions-CQs-nLCA.js",
-    "name": "TermsConditions",
-    "src": "resources/js/Pages/TermsConditions.jsx",
-    "isDynamicEntry": true,
-    "imports": [
-      "resources/js/app.jsx",
-      "_AppLayout-Bnqh_oc0.js"
-    ]
-  },
-  "resources/js/Pages/Testimonials.jsx": {
-    "file": "assets/Testimonials-JOBcQIok.js",
-    "name": "Testimonials",
-    "src": "resources/js/Pages/Testimonials.jsx",
-    "isDynamicEntry": true,
-    "imports": [
-      "resources/js/app.jsx",
-      "_AppLayout-Bnqh_oc0.js"
-    ]
-  },
-  "resources/js/app.jsx": {
-    "file": "assets/app-CCxbKitU.js",
-    "name": "app",
-    "src": "resources/js/app.jsx",
+  "resources/src/index.jsx": {
+    "file": "assets/index-DL6JDNjp.js",
+    "name": "index",
+    "src": "resources/src/index.jsx",
     "isEntry": true,
     "dynamicImports": [
-      "resources/js/Pages/About.jsx",
-      "resources/js/Pages/Account/AppliedJobs.jsx",
-      "resources/js/Pages/Account/ChangePassword.jsx",
-      "resources/js/Pages/Account/Index.jsx",
-      "resources/js/Pages/Account/Messages.jsx",
-      "resources/js/Pages/Account/Profile.jsx",
-      "resources/js/Pages/Account/Resume.jsx",
-      "resources/js/Pages/Account/SavedJobs.jsx",
-      "resources/js/Pages/Auth/Login.jsx",
-      "resources/js/Pages/Auth/Register.jsx",
-      "resources/js/Pages/Blog/Index.jsx",
-      "resources/js/Pages/Blog/Show.jsx",
-      "resources/js/Pages/Blog/StyleTwo.jsx",
-      "resources/js/Pages/Candidates/Index.jsx",
-      "resources/js/Pages/Candidates/Show.jsx",
-      "resources/js/Pages/Categories.jsx",
-      "resources/js/Pages/Companies/Index.jsx",
-      "resources/js/Pages/Companies/Show.jsx",
-      "resources/js/Pages/Contact.jsx",
-      "resources/js/Pages/FAQ.jsx",
-      "resources/js/Pages/Home.jsx",
-      "resources/js/Pages/Jobs/Create.jsx",
-      "resources/js/Pages/Jobs/Edit.jsx",
-      "resources/js/Pages/Jobs/Grid.jsx",
-      "resources/js/Pages/Jobs/Index.jsx",
-      "resources/js/Pages/Jobs/List.jsx",
-      "resources/js/Pages/Jobs/Show.jsx",
-      "resources/js/Pages/Pricing.jsx",
-      "resources/js/Pages/PrivacyPolicy.jsx",
-      "resources/js/Pages/TermsConditions.jsx",
-      "resources/js/Pages/Testimonials.jsx"
+      "resources/src/pages/dashboard/candidate/Applications.jsx",
+      "resources/src/pages/dashboard/candidate/SavedJobs.jsx",
+      "resources/src/pages/dashboard/candidate/Profile.jsx",
+      "resources/src/pages/dashboard/employer/EmployerJobs.jsx",
+      "resources/src/pages/dashboard/employer/EmployerApplications.jsx"
+    ]
+  },
+  "resources/src/pages/dashboard/candidate/Applications.jsx": {
+    "file": "assets/Applications-BAvggiBI.js",
+    "name": "Applications",
+    "src": "resources/src/pages/dashboard/candidate/Applications.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/src/index.jsx",
+      "_userService-CcL6DIW3.js",
+      "_ClockIcon-DlThbMWZ.js",
+      "_EyeIcon-Ce0w4tf4.js",
+      "_XCircleIcon-Chesx2Pn.js"
+    ]
+  },
+  "resources/src/pages/dashboard/candidate/Profile.jsx": {
+    "file": "assets/Profile-1racSvL1.js",
+    "name": "Profile",
+    "src": "resources/src/pages/dashboard/candidate/Profile.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/src/index.jsx"
+    ]
+  },
+  "resources/src/pages/dashboard/candidate/SavedJobs.jsx": {
+    "file": "assets/SavedJobs-BiQ4NvKl.js",
+    "name": "SavedJobs",
+    "src": "resources/src/pages/dashboard/candidate/SavedJobs.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/src/index.jsx",
+      "_userService-CcL6DIW3.js",
+      "_ClockIcon-DlThbMWZ.js",
+      "_BriefcaseIcon-b8lqYzG9.js"
+    ]
+  },
+  "resources/src/pages/dashboard/employer/EmployerApplications.jsx": {
+    "file": "assets/EmployerApplications-IZFZ9WwP.js",
+    "name": "EmployerApplications",
+    "src": "resources/src/pages/dashboard/employer/EmployerApplications.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/src/index.jsx",
+      "_useDashboardStats-CY67Pkca.js",
+      "_ClockIcon-DlThbMWZ.js",
+      "_EyeIcon-Ce0w4tf4.js",
+      "_XCircleIcon-Chesx2Pn.js"
+    ]
+  },
+  "resources/src/pages/dashboard/employer/EmployerJobs.jsx": {
+    "file": "assets/EmployerJobs-CokPvh26.js",
+    "name": "EmployerJobs",
+    "src": "resources/src/pages/dashboard/employer/EmployerJobs.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/src/index.jsx",
+      "_useDashboardStats-CY67Pkca.js",
+      "_BriefcaseIcon-b8lqYzG9.js",
+      "_EyeIcon-Ce0w4tf4.js"
     ]
   }
 }

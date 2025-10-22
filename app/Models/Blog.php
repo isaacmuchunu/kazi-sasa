@@ -10,20 +10,24 @@ class Blog extends Model
     use HasFactory;
 
     protected $fillable = [
+        'author_id',
         'title',
         'slug',
-        'content',
         'excerpt',
+        'content',
         'featured_image',
-        'author_id',
+        'tags',
+        'category',
         'status',
         'published_at',
         'views_count',
     ];
 
     protected $casts = [
+        'tags' => 'array',
         'published_at' => 'datetime',
-        'views_count' => 'integer',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     public function author()
@@ -31,11 +35,22 @@ class Blog extends Model
         return $this->belongsTo(User::class, 'author_id');
     }
 
-    /**
-     * Scope a query to only include published blogs.
-     */
+    public function comments()
+    {
+        return $this->hasMany(Comment::class)->where('status', 'approved');
+    }
+
     public function scopePublished($query)
     {
-        return $query->where('status', 'published');
+        return $query->where('status', 'published')
+                     ->whereNotNull('published_at')
+                     ->where('published_at', '<=', now());
     }
-};
+
+    public function scopeRecent($query, $limit = 5)
+    {
+        return $query->published()
+                     ->orderBy('published_at', 'desc')
+                     ->limit($limit);
+    }
+}

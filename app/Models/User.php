@@ -154,12 +154,13 @@ class User extends Authenticatable
      */
     public function getProfileUrlAttribute(): string
     {
+        // Routes will be handled by React frontend
         if ($this->isCandidate()) {
-            return route('candidates.show', $this->user_name);
+            return "/candidates/{$this->user_name}";
         }
 
         if ($this->isEmployer() && $this->company) {
-            return route('companies.show', $this->company->slug);
+            return "/companies/{$this->company->slug}";
         }
 
         return '#';

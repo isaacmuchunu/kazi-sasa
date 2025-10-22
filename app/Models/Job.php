@@ -89,12 +89,22 @@ class Job extends Model
             return 'Salary not disclosed';
         }
 
+        $period = ucfirst($this->salary_period ?? 'month');
+
         if ($this->salary_min && $this->salary_max) {
-            return number_format($this->salary_min) . ' - ' . number_format($this->salary_max) . ' ' . ucfirst($this->salary_period);
+            return number_format($this->salary_min) . ' - ' . number_format($this->salary_max) . ' per ' . $period;
         } elseif ($this->salary_min) {
-            return 'From ' . number_format($this->salary_min) . ' ' . ucfirst($this->salary_period);
+            return 'From ' . number_format($this->salary_min) . ' per ' . $period;
         } else {
-            return 'Up to ' . number_format($this->salary_max) . ' ' . ucfirst($this->salary_period);
+            return 'Up to ' . number_format($this->salary_max) . ' per ' . $period;
         }
+    }
+
+    /**
+     * Check if the job posting has expired.
+     */
+    public function getIsExpiredAttribute()
+    {
+        return $this->apply_deadline && $this->apply_deadline->isPast();
     }
 }
