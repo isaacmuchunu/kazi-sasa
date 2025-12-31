@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import jobService from '../services/jobService';
+import { jobService } from '../services/jobService';
 import { mapApiJobsToTemplate } from '../utils/mappers/jobMapper';
 
 export const useJobs = (filters = {}) => {
@@ -15,7 +15,7 @@ export const useJobs = (filters = {}) => {
   const fetchJobs = async () => {
     try {
       setLoading(true);
-      const response = await jobService.getAllJobs(filters);
+      const response = await jobService.getJobs(filters);
       const mappedJobs = mapApiJobsToTemplate(response.data.data.data || response.data.data);
       setJobs(mappedJobs);
       

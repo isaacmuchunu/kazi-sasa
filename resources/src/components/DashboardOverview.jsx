@@ -5,7 +5,7 @@ import useDashboardStats from '../hooks/useDashboardStats';
 import LoadingScreen from './LoadingScreen';
 
 const DashboardOverview = () => {
-  const { user } = useAuth();
+  const { user, isCandidate, isEmployer } = useAuth();
   const { stats, loading, error } = useDashboardStats();
 
   if (loading) {
@@ -38,7 +38,7 @@ const DashboardOverview = () => {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {user?.isCandidate() ? (
+        {isCandidate() ? (
           <>
             {/* Candidate Stats */}
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
@@ -181,7 +181,7 @@ const DashboardOverview = () => {
           Quick Actions
         </h2>
         <div className="flex items-center space-x-4">
-          {user?.isCandidate() ? (
+          {isCandidate() ? (
             <>
               <Link
                 to="/jobs"
@@ -233,7 +233,7 @@ const DashboardOverview = () => {
           Recent Activity
         </h2>
 
-        {user?.isCandidate() ? (
+        {isCandidate() ? (
           <div className="space-y-4">
             {stats.recent_applications?.slice(0, 3).map((application) => (
               <div key={application.id} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0">

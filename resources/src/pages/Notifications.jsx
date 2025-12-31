@@ -4,6 +4,26 @@ import { CheckCircleIcon, ExclamationTriangleIcon, InformationCircleIcon, BellIc
 const Notifications = () => {
   const [activeTab, setActiveTab] = useState('all');
 
+  // Map color names to actual Tailwind classes (Tailwind needs literal class names)
+  const colorClasses = {
+    green: {
+      bg: 'bg-green-100',
+      text: 'text-green-600'
+    },
+    blue: {
+      bg: 'bg-blue-100',
+      text: 'text-blue-600'
+    },
+    yellow: {
+      bg: 'bg-yellow-100',
+      text: 'text-yellow-600'
+    },
+    red: {
+      bg: 'bg-red-100',
+      text: 'text-red-600'
+    }
+  };
+
   const notifications = [
     {
       id: 1,
@@ -139,8 +159,8 @@ const Notifications = () => {
               >
                 <div className="flex items-start justify-between">
                   <div className="flex items-start space-x-4">
-                    <div className={`w-10 h-10 rounded-full bg-${notification.color}-100 flex items-center justify-center flex-shrink-0`}>
-                      <notification.icon className={`h-5 w-5 text-${notification.color}-600`} />
+                    <div className={`w-10 h-10 rounded-full ${colorClasses[notification.color]?.bg || 'bg-gray-100'} flex items-center justify-center flex-shrink-0`}>
+                      <notification.icon className={`h-5 w-5 ${colorClasses[notification.color]?.text || 'text-gray-600'}`} />
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center space-x-2 mb-1">

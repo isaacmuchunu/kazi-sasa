@@ -1,4 +1,4 @@
-import api from '../config/api';
+import api from './api';
 
 export const jobService = {
   // Get all jobs with filters

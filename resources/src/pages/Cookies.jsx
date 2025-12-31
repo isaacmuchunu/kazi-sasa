@@ -1,10 +1,10 @@
 import React from 'react';
-import { CookieIcon, ShieldCheckIcon, AdjustmentsHorizontalIcon } from '@heroicons/react/24/outline';
+import { CubeIcon, ShieldCheckIcon, AdjustmentsHorizontalIcon } from '@heroicons/react/24/outline';
 
 const Cookies = () => {
   const cookieTypes = [
     {
-      icon: CookieIcon,
+      icon: CubeIcon,
       title: "Essential Cookies",
       description: "These cookies are necessary for the website to function and cannot be switched off in our systems. They are usually only set in response to actions made by you which amount to a request for services, such as setting your privacy preferences, logging in or filling in forms.",
       required: true,
@@ -32,7 +32,7 @@ const Cookies = () => {
         <div className="bg-white rounded-lg shadow-sm">
           <div className="p-8">
             <div className="text-center mb-8">
-              <CookieIcon className="mx-auto h-16 w-16 text-indigo-600 mb-4" />
+              <CubeIcon className="mx-auto h-16 w-16 text-indigo-600 mb-4" />
               <h1 className="text-3xl font-bold text-gray-900 mb-4">Cookie Policy</h1>
               <p className="text-lg text-gray-600 max-w-2xl mx-auto">
                 Understanding how Kazi Sasa uses cookies and similar technologies to enhance your experience

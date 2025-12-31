@@ -8,6 +8,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 // Auth pages
 const Login = lazy(() => import("./pages/Login"));
 const Register = lazy(() => import("./pages/Register"));
+const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
 
 // Main pages
 const Dashboard = lazy(() => import("./pages/Dashboard"));
@@ -37,6 +38,7 @@ const SavedJobs = lazy(() => import("./pages/dashboard/candidate/SavedJobs"));
 const CandidateProfile = lazy(() => import("./pages/dashboard/candidate/Profile"));
 const EmployerJobs = lazy(() => import("./pages/dashboard/employer/EmployerJobs"));
 const EmployerApplications = lazy(() => import("./pages/dashboard/employer/EmployerApplications"));
+const EmployerCompany = lazy(() => import("./pages/dashboard/employer/EmployerCompany"));
 
 function App() {
   return (
@@ -55,6 +57,13 @@ function App() {
             <ProtectedRoute requireAuth={false}>
               <Layout>
                 <Register />
+              </Layout>
+            </ProtectedRoute>
+          } />
+          <Route path="/forgot-password" element={
+            <ProtectedRoute requireAuth={false}>
+              <Layout>
+                <ForgotPassword />
               </Layout>
             </ProtectedRoute>
           } />
@@ -101,6 +110,13 @@ function App() {
             <ProtectedRoute>
               <Layout>
                 <EmployerApplications />
+              </Layout>
+            </ProtectedRoute>
+          } />
+          <Route path="/employer/company" element={
+            <ProtectedRoute>
+              <Layout>
+                <EmployerCompany />
               </Layout>
             </ProtectedRoute>
           } />

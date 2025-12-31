@@ -1,48 +1,182 @@
 {
-  "_BriefcaseIcon-b8lqYzG9.js": {
-    "file": "assets/BriefcaseIcon-b8lqYzG9.js",
+  "_AdjustmentsHorizontalIcon-0ovxJAnk.js": {
+    "file": "assets/AdjustmentsHorizontalIcon-0ovxJAnk.js",
+    "name": "AdjustmentsHorizontalIcon",
+    "imports": [
+      "resources/src/index.jsx"
+    ]
+  },
+  "_BriefcaseIcon-BOtJmV7e.js": {
+    "file": "assets/BriefcaseIcon-BOtJmV7e.js",
     "name": "BriefcaseIcon",
     "imports": [
       "resources/src/index.jsx"
     ]
   },
-  "_ClockIcon-DlThbMWZ.js": {
-    "file": "assets/ClockIcon-DlThbMWZ.js",
+  "_Button-CFU82qPs.js": {
+    "file": "assets/Button-CFU82qPs.js",
+    "name": "Button",
+    "imports": [
+      "resources/src/index.jsx"
+    ]
+  },
+  "_CheckCircleIcon-B197pWau.js": {
+    "file": "assets/CheckCircleIcon-B197pWau.js",
+    "name": "CheckCircleIcon",
+    "imports": [
+      "resources/src/index.jsx"
+    ]
+  },
+  "_CheckIcon-BRZUHy7c.js": {
+    "file": "assets/CheckIcon-BRZUHy7c.js",
+    "name": "CheckIcon",
+    "imports": [
+      "resources/src/index.jsx"
+    ]
+  },
+  "_ClockIcon-Cz_iejxm.js": {
+    "file": "assets/ClockIcon-Cz_iejxm.js",
     "name": "ClockIcon",
     "imports": [
       "resources/src/index.jsx"
     ]
   },
-  "_EyeIcon-Ce0w4tf4.js": {
-    "file": "assets/EyeIcon-Ce0w4tf4.js",
+  "_CompanyCard-DRwsn-SJ.js": {
+    "file": "assets/CompanyCard-DRwsn-SJ.js",
+    "name": "CompanyCard",
+    "imports": [
+      "resources/src/index.jsx",
+      "_format-53rgS1JY.js"
+    ]
+  },
+  "_DocumentTextIcon-BAJhaZsa.js": {
+    "file": "assets/DocumentTextIcon-BAJhaZsa.js",
+    "name": "DocumentTextIcon",
+    "imports": [
+      "resources/src/index.jsx"
+    ]
+  },
+  "_EmptyState-iRTnThZM.js": {
+    "file": "assets/EmptyState-iRTnThZM.js",
+    "name": "EmptyState",
+    "imports": [
+      "resources/src/index.jsx"
+    ]
+  },
+  "_ErrorMessage-RJ_6hZq8.js": {
+    "file": "assets/ErrorMessage-RJ_6hZq8.js",
+    "name": "ErrorMessage",
+    "imports": [
+      "resources/src/index.jsx"
+    ]
+  },
+  "_EyeIcon-D62hH4Rg.js": {
+    "file": "assets/EyeIcon-D62hH4Rg.js",
     "name": "EyeIcon",
     "imports": [
       "resources/src/index.jsx"
     ]
   },
-  "_XCircleIcon-Chesx2Pn.js": {
-    "file": "assets/XCircleIcon-Chesx2Pn.js",
+  "_GlobeAltIcon-CmjqICyn.js": {
+    "file": "assets/GlobeAltIcon-CmjqICyn.js",
+    "name": "GlobeAltIcon",
+    "imports": [
+      "resources/src/index.jsx"
+    ]
+  },
+  "_Input-DbViJC2h.js": {
+    "file": "assets/Input-DbViJC2h.js",
+    "name": "Input",
+    "imports": [
+      "resources/src/index.jsx"
+    ]
+  },
+  "_JobCard-3ggqQ_XM.js": {
+    "file": "assets/JobCard-3ggqQ_XM.js",
+    "name": "JobCard",
+    "imports": [
+      "resources/src/index.jsx",
+      "_format-53rgS1JY.js",
+      "_ClockIcon-Cz_iejxm.js",
+      "_BriefcaseIcon-BOtJmV7e.js"
+    ]
+  },
+  "_MagnifyingGlassIcon-C3Lg5ybq.js": {
+    "file": "assets/MagnifyingGlassIcon-C3Lg5ybq.js",
+    "name": "MagnifyingGlassIcon",
+    "imports": [
+      "resources/src/index.jsx"
+    ]
+  },
+  "_MapPinIcon-BI3rA57u.js": {
+    "file": "assets/MapPinIcon-BI3rA57u.js",
+    "name": "MapPinIcon",
+    "imports": [
+      "resources/src/index.jsx"
+    ]
+  },
+  "_Pagination-Y8-CD7RF.js": {
+    "file": "assets/Pagination-Y8-CD7RF.js",
+    "name": "Pagination",
+    "imports": [
+      "resources/src/index.jsx"
+    ]
+  },
+  "_PencilIcon-Ddo5tiJv.js": {
+    "file": "assets/PencilIcon-Ddo5tiJv.js",
+    "name": "PencilIcon",
+    "imports": [
+      "resources/src/index.jsx"
+    ]
+  },
+  "_ShieldCheckIcon-Dm2g_pBC.js": {
+    "file": "assets/ShieldCheckIcon-Dm2g_pBC.js",
+    "name": "ShieldCheckIcon",
+    "imports": [
+      "resources/src/index.jsx"
+    ]
+  },
+  "_UserIcon-Cd_eGw_Q.js": {
+    "file": "assets/UserIcon-Cd_eGw_Q.js",
+    "name": "UserIcon",
+    "imports": [
+      "resources/src/index.jsx"
+    ]
+  },
+  "_UsersIcon-Cy3E_jjI.js": {
+    "file": "assets/UsersIcon-Cy3E_jjI.js",
+    "name": "UsersIcon",
+    "imports": [
+      "resources/src/index.jsx"
+    ]
+  },
+  "_XCircleIcon-C6S9vPfb.js": {
+    "file": "assets/XCircleIcon-C6S9vPfb.js",
     "name": "XCircleIcon",
     "imports": [
       "resources/src/index.jsx"
     ]
   },
-  "_useDashboardStats-CY67Pkca.js": {
-    "file": "assets/useDashboardStats-CY67Pkca.js",
+  "_format-53rgS1JY.js": {
+    "file": "assets/format-53rgS1JY.js",
+    "name": "format"
+  },
+  "_useDashboardStats-CfLRSYvp.js": {
+    "file": "assets/useDashboardStats-CfLRSYvp.js",
     "name": "useDashboardStats",
     "imports": [
       "resources/src/index.jsx"
     ]
   },
-  "_userService-CcL6DIW3.js": {
-    "file": "assets/userService-CcL6DIW3.js",
+  "_userService-PUO02s9r.js": {
+    "file": "assets/userService-PUO02s9r.js",
     "name": "userService",
     "imports": [
       "resources/src/index.jsx"
     ]
   },
   "resources/css/app.css": {
-    "file": "assets/app-D9ytP5jI.css",
+    "file": "assets/app-aC5-It2F.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "names": [
@@ -50,75 +184,383 @@
     ]
   },
   "resources/src/index.jsx": {
-    "file": "assets/index-DL6JDNjp.js",
+    "file": "assets/index-ByHNBDC-.js",
     "name": "index",
     "src": "resources/src/index.jsx",
     "isEntry": true,
     "dynamicImports": [
+      "resources/src/pages/Login.jsx",
+      "resources/src/pages/Register.jsx",
+      "resources/src/pages/ForgotPassword.jsx",
+      "resources/src/pages/Dashboard.jsx",
+      "resources/src/pages/Home.jsx",
+      "resources/src/pages/Jobs.jsx",
+      "resources/src/pages/JobDetails.jsx",
+      "resources/src/pages/Companies.jsx",
+      "resources/src/pages/CompanyDetails.jsx",
+      "resources/src/pages/Candidates.jsx",
+      "resources/src/pages/CandidateDetails.jsx",
+      "resources/src/pages/Blog.jsx",
+      "resources/src/pages/BlogDetails.jsx",
+      "resources/src/pages/About.jsx",
+      "resources/src/pages/Contact.jsx",
+      "resources/src/pages/Help.jsx",
+      "resources/src/pages/Notifications.jsx",
+      "resources/src/pages/Settings.jsx",
+      "resources/src/pages/Pricing.jsx",
+      "resources/src/pages/TermsConditions.jsx",
+      "resources/src/pages/PrivacyPolicy.jsx",
+      "resources/src/pages/Cookies.jsx",
+      "resources/src/pages/NotFound.jsx",
       "resources/src/pages/dashboard/candidate/Applications.jsx",
       "resources/src/pages/dashboard/candidate/SavedJobs.jsx",
       "resources/src/pages/dashboard/candidate/Profile.jsx",
       "resources/src/pages/dashboard/employer/EmployerJobs.jsx",
-      "resources/src/pages/dashboard/employer/EmployerApplications.jsx"
+      "resources/src/pages/dashboard/employer/EmployerApplications.jsx",
+      "resources/src/pages/dashboard/employer/EmployerCompany.jsx"
     ]
   },
-  "resources/src/pages/dashboard/candidate/Applications.jsx": {
-    "file": "assets/Applications-BAvggiBI.js",
-    "name": "Applications",
-    "src": "resources/src/pages/dashboard/candidate/Applications.jsx",
+  "resources/src/pages/About.jsx": {
+    "file": "assets/About-Dy6o9qTF.js",
+    "name": "About",
+    "src": "resources/src/pages/About.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/src/index.jsx",
-      "_userService-CcL6DIW3.js",
-      "_ClockIcon-DlThbMWZ.js",
-      "_EyeIcon-Ce0w4tf4.js",
-      "_XCircleIcon-Chesx2Pn.js"
+      "_CheckCircleIcon-B197pWau.js",
+      "_UsersIcon-Cy3E_jjI.js",
+      "_GlobeAltIcon-CmjqICyn.js"
     ]
   },
-  "resources/src/pages/dashboard/candidate/Profile.jsx": {
-    "file": "assets/Profile-1racSvL1.js",
-    "name": "Profile",
-    "src": "resources/src/pages/dashboard/candidate/Profile.jsx",
+  "resources/src/pages/Blog.jsx": {
+    "file": "assets/Blog-olgJr5vt.js",
+    "name": "Blog",
+    "src": "resources/src/pages/Blog.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/src/index.jsx",
+      "_UserIcon-Cd_eGw_Q.js",
+      "_ClockIcon-Cz_iejxm.js",
+      "_AdjustmentsHorizontalIcon-0ovxJAnk.js",
+      "_MagnifyingGlassIcon-C3Lg5ybq.js",
+      "_DocumentTextIcon-BAJhaZsa.js"
+    ]
+  },
+  "resources/src/pages/BlogDetails.jsx": {
+    "file": "assets/BlogDetails-DiAUmCqU.js",
+    "name": "BlogDetails",
+    "src": "resources/src/pages/BlogDetails.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/src/index.jsx"
     ]
   },
+  "resources/src/pages/CandidateDetails.jsx": {
+    "file": "assets/CandidateDetails-DLs10NL-.js",
+    "name": "CandidateDetails",
+    "src": "resources/src/pages/CandidateDetails.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/src/index.jsx"
+    ]
+  },
+  "resources/src/pages/Candidates.jsx": {
+    "file": "assets/Candidates-UFro043i.js",
+    "name": "Candidates",
+    "src": "resources/src/pages/Candidates.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/src/index.jsx",
+      "_MapPinIcon-BI3rA57u.js",
+      "_AdjustmentsHorizontalIcon-0ovxJAnk.js",
+      "_MagnifyingGlassIcon-C3Lg5ybq.js",
+      "_UserIcon-Cd_eGw_Q.js"
+    ]
+  },
+  "resources/src/pages/Companies.jsx": {
+    "file": "assets/Companies-BkTphyX8.js",
+    "name": "Companies",
+    "src": "resources/src/pages/Companies.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/src/index.jsx",
+      "_CompanyCard-DRwsn-SJ.js",
+      "_ErrorMessage-RJ_6hZq8.js",
+      "_EmptyState-iRTnThZM.js",
+      "_Pagination-Y8-CD7RF.js",
+      "_format-53rgS1JY.js"
+    ]
+  },
+  "resources/src/pages/CompanyDetails.jsx": {
+    "file": "assets/CompanyDetails-B6KJpn7s.js",
+    "name": "CompanyDetails",
+    "src": "resources/src/pages/CompanyDetails.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/src/index.jsx",
+      "_ErrorMessage-RJ_6hZq8.js",
+      "_JobCard-3ggqQ_XM.js",
+      "_Pagination-Y8-CD7RF.js",
+      "_format-53rgS1JY.js",
+      "_ClockIcon-Cz_iejxm.js",
+      "_BriefcaseIcon-BOtJmV7e.js"
+    ]
+  },
+  "resources/src/pages/Contact.jsx": {
+    "file": "assets/Contact-CBZUgzvB.js",
+    "name": "Contact",
+    "src": "resources/src/pages/Contact.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/src/index.jsx",
+      "_Button-CFU82qPs.js",
+      "_ClockIcon-Cz_iejxm.js"
+    ]
+  },
+  "resources/src/pages/Cookies.jsx": {
+    "file": "assets/Cookies-6BS-rmud.js",
+    "name": "Cookies",
+    "src": "resources/src/pages/Cookies.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/src/index.jsx",
+      "_ShieldCheckIcon-Dm2g_pBC.js",
+      "_AdjustmentsHorizontalIcon-0ovxJAnk.js"
+    ]
+  },
+  "resources/src/pages/Dashboard.jsx": {
+    "file": "assets/Dashboard-BOWj0-xS.js",
+    "name": "Dashboard",
+    "src": "resources/src/pages/Dashboard.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/src/index.jsx",
+      "_useDashboardStats-CfLRSYvp.js"
+    ]
+  },
+  "resources/src/pages/ForgotPassword.jsx": {
+    "file": "assets/ForgotPassword-BVvK5QgE.js",
+    "name": "ForgotPassword",
+    "src": "resources/src/pages/ForgotPassword.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/src/index.jsx"
+    ]
+  },
+  "resources/src/pages/Help.jsx": {
+    "file": "assets/Help-Bx_JXnQl.js",
+    "name": "Help",
+    "src": "resources/src/pages/Help.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/src/index.jsx"
+    ]
+  },
+  "resources/src/pages/Home.jsx": {
+    "file": "assets/Home-CaZogeZ7.js",
+    "name": "Home",
+    "src": "resources/src/pages/Home.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/src/index.jsx",
+      "_JobCard-3ggqQ_XM.js",
+      "_CompanyCard-DRwsn-SJ.js",
+      "_ErrorMessage-RJ_6hZq8.js",
+      "_MagnifyingGlassIcon-C3Lg5ybq.js",
+      "_MapPinIcon-BI3rA57u.js",
+      "_format-53rgS1JY.js",
+      "_ClockIcon-Cz_iejxm.js",
+      "_BriefcaseIcon-BOtJmV7e.js"
+    ]
+  },
+  "resources/src/pages/JobDetails.jsx": {
+    "file": "assets/JobDetails-DIlInV1W.js",
+    "name": "JobDetails",
+    "src": "resources/src/pages/JobDetails.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/src/index.jsx",
+      "_ErrorMessage-RJ_6hZq8.js",
+      "_JobCard-3ggqQ_XM.js",
+      "_format-53rgS1JY.js",
+      "_ClockIcon-Cz_iejxm.js",
+      "_BriefcaseIcon-BOtJmV7e.js"
+    ]
+  },
+  "resources/src/pages/Jobs.jsx": {
+    "file": "assets/Jobs-BKgk3F_X.js",
+    "name": "Jobs",
+    "src": "resources/src/pages/Jobs.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/src/index.jsx",
+      "_JobCard-3ggqQ_XM.js",
+      "_ErrorMessage-RJ_6hZq8.js",
+      "_EmptyState-iRTnThZM.js",
+      "_Pagination-Y8-CD7RF.js",
+      "_format-53rgS1JY.js",
+      "_ClockIcon-Cz_iejxm.js",
+      "_BriefcaseIcon-BOtJmV7e.js"
+    ]
+  },
+  "resources/src/pages/Login.jsx": {
+    "file": "assets/Login-BHm6grFA.js",
+    "name": "Login",
+    "src": "resources/src/pages/Login.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/src/index.jsx",
+      "_Button-CFU82qPs.js",
+      "_Input-DbViJC2h.js"
+    ]
+  },
+  "resources/src/pages/NotFound.jsx": {
+    "file": "assets/NotFound-CvyDMDZk.js",
+    "name": "NotFound",
+    "src": "resources/src/pages/NotFound.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/src/index.jsx"
+    ]
+  },
+  "resources/src/pages/Notifications.jsx": {
+    "file": "assets/Notifications-CFgYSssJ.js",
+    "name": "Notifications",
+    "src": "resources/src/pages/Notifications.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/src/index.jsx",
+      "_CheckCircleIcon-B197pWau.js"
+    ]
+  },
+  "resources/src/pages/Pricing.jsx": {
+    "file": "assets/Pricing-CphWQ2Qd.js",
+    "name": "Pricing",
+    "src": "resources/src/pages/Pricing.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/src/index.jsx",
+      "_CheckIcon-BRZUHy7c.js"
+    ]
+  },
+  "resources/src/pages/PrivacyPolicy.jsx": {
+    "file": "assets/PrivacyPolicy-C_Jv4jXj.js",
+    "name": "PrivacyPolicy",
+    "src": "resources/src/pages/PrivacyPolicy.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/src/index.jsx"
+    ]
+  },
+  "resources/src/pages/Register.jsx": {
+    "file": "assets/Register-Dvwoepeh.js",
+    "name": "Register",
+    "src": "resources/src/pages/Register.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/src/index.jsx",
+      "_Button-CFU82qPs.js",
+      "_Input-DbViJC2h.js"
+    ]
+  },
+  "resources/src/pages/Settings.jsx": {
+    "file": "assets/Settings-DTCSvw7J.js",
+    "name": "Settings",
+    "src": "resources/src/pages/Settings.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/src/index.jsx",
+      "_UserIcon-Cd_eGw_Q.js",
+      "_ShieldCheckIcon-Dm2g_pBC.js",
+      "_GlobeAltIcon-CmjqICyn.js"
+    ]
+  },
+  "resources/src/pages/TermsConditions.jsx": {
+    "file": "assets/TermsConditions-D2PpKCDL.js",
+    "name": "TermsConditions",
+    "src": "resources/src/pages/TermsConditions.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/src/index.jsx"
+    ]
+  },
+  "resources/src/pages/dashboard/candidate/Applications.jsx": {
+    "file": "assets/Applications-Vp1JBmzk.js",
+    "name": "Applications",
+    "src": "resources/src/pages/dashboard/candidate/Applications.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/src/index.jsx",
+      "_userService-PUO02s9r.js",
+      "_ClockIcon-Cz_iejxm.js",
+      "_EyeIcon-D62hH4Rg.js",
+      "_XCircleIcon-C6S9vPfb.js",
+      "_CheckCircleIcon-B197pWau.js"
+    ]
+  },
+  "resources/src/pages/dashboard/candidate/Profile.jsx": {
+    "file": "assets/Profile-DWspAD7P.js",
+    "name": "Profile",
+    "src": "resources/src/pages/dashboard/candidate/Profile.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/src/index.jsx",
+      "_PencilIcon-Ddo5tiJv.js",
+      "_CheckIcon-BRZUHy7c.js",
+      "_DocumentTextIcon-BAJhaZsa.js"
+    ]
+  },
   "resources/src/pages/dashboard/candidate/SavedJobs.jsx": {
-    "file": "assets/SavedJobs-BiQ4NvKl.js",
+    "file": "assets/SavedJobs-DB7Qw_S0.js",
     "name": "SavedJobs",
     "src": "resources/src/pages/dashboard/candidate/SavedJobs.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/src/index.jsx",
-      "_userService-CcL6DIW3.js",
-      "_ClockIcon-DlThbMWZ.js",
-      "_BriefcaseIcon-b8lqYzG9.js"
+      "_userService-PUO02s9r.js",
+      "_JobCard-3ggqQ_XM.js",
+      "_format-53rgS1JY.js",
+      "_ClockIcon-Cz_iejxm.js",
+      "_BriefcaseIcon-BOtJmV7e.js"
     ]
   },
   "resources/src/pages/dashboard/employer/EmployerApplications.jsx": {
-    "file": "assets/EmployerApplications-IZFZ9WwP.js",
+    "file": "assets/EmployerApplications-C2qrL74k.js",
     "name": "EmployerApplications",
     "src": "resources/src/pages/dashboard/employer/EmployerApplications.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/src/index.jsx",
-      "_useDashboardStats-CY67Pkca.js",
-      "_ClockIcon-DlThbMWZ.js",
-      "_EyeIcon-Ce0w4tf4.js",
-      "_XCircleIcon-Chesx2Pn.js"
+      "_useDashboardStats-CfLRSYvp.js",
+      "_ClockIcon-Cz_iejxm.js",
+      "_EyeIcon-D62hH4Rg.js",
+      "_XCircleIcon-C6S9vPfb.js",
+      "_CheckCircleIcon-B197pWau.js"
+    ]
+  },
+  "resources/src/pages/dashboard/employer/EmployerCompany.jsx": {
+    "file": "assets/EmployerCompany-DEQpz0mb.js",
+    "name": "EmployerCompany",
+    "src": "resources/src/pages/dashboard/employer/EmployerCompany.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/src/index.jsx",
+      "_CheckCircleIcon-B197pWau.js",
+      "_PencilIcon-Ddo5tiJv.js",
+      "_GlobeAltIcon-CmjqICyn.js"
     ]
   },
   "resources/src/pages/dashboard/employer/EmployerJobs.jsx": {
-    "file": "assets/EmployerJobs-CokPvh26.js",
+    "file": "assets/EmployerJobs-3eULdDMd.js",
     "name": "EmployerJobs",
     "src": "resources/src/pages/dashboard/employer/EmployerJobs.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/src/index.jsx",
-      "_useDashboardStats-CY67Pkca.js",
-      "_BriefcaseIcon-b8lqYzG9.js",
-      "_EyeIcon-Ce0w4tf4.js"
+      "_useDashboardStats-CfLRSYvp.js",
+      "_BriefcaseIcon-BOtJmV7e.js",
+      "_EyeIcon-D62hH4Rg.js",
+      "_UsersIcon-Cy3E_jjI.js"
     ]
   }
 }
