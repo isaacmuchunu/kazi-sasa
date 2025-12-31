@@ -112,7 +112,7 @@ const JobCard = ({ job }) => {
 
     try {
       setIsApplying(true);
-      await apiService.applyToJob(job.id);
+      await apiService.applyForJob(job.id);
       window.location.href = `/jobs/${job.id}?applied=true`;
     } catch (error) {
       console.error('Failed to apply:', error);

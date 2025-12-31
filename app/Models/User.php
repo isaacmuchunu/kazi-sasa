@@ -7,6 +7,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class User extends Authenticatable
 {
@@ -86,11 +87,11 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the jobs posted by the user (for employers).
+     * Get the jobs posted by the user (for employers through their company).
      */
-    public function jobs(): HasMany
+    public function jobs(): HasManyThrough
     {
-        return $this->hasMany(Job::class);
+        return $this->hasManyThrough(Job::class, Company::class);
     }
 
     /**
@@ -114,7 +115,31 @@ class User extends Authenticatable
      */
     public function blogs(): HasMany
     {
-        return $this->hasMany(Blog::class);
+        return $this->hasMany(Blog::class, 'author_id');
+    }
+
+    /**
+     * Get the notifications for the user.
+     */
+    public function notifications(): HasMany
+    {
+        return $this->hasMany(Notification::class);
+    }
+
+    /**
+     * Get the messages sent by the user.
+     */
+    public function sentMessages(): HasMany
+    {
+        return $this->hasMany(Message::class, 'sender_id');
+    }
+
+    /**
+     * Get the messages received by the user.
+     */
+    public function receivedMessages(): HasMany
+    {
+        return $this->hasMany(Message::class, 'recipient_id');
     }
 
     /**

@@ -14,13 +14,13 @@ class MessageController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
-        $messages = Message::with(['sender', 'receiver'])
+        $messages = Message::with(['sender', 'recipient'])
             ->where(function ($query) {
                 $query->where('sender_id', Auth::id())
-                      ->orWhere('receiver_id', Auth::id());
+                      ->orWhere('recipient_id', Auth::id());
             })
-            ->with(['sender:id,first_name,last_name,user_name,profile_image', 
-                   'receiver:id,first_name,last_name,user_name,profile_image'])
+            ->with(['sender:id,first_name,last_name,user_name,profile_image',
+                   'recipient:id,first_name,last_name,user_name,profile_image'])
             ->latest()
             ->paginate(20);
 
@@ -33,7 +33,7 @@ class MessageController extends Controller
     public function store(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'receiver_id' => 'required|exists:users,id',
+            'recipient_id' => 'required|exists:users,id',
             'subject' => 'required|string|max:255',
             'message' => 'required|string|max:2000',
         ]);
@@ -46,9 +46,9 @@ class MessageController extends Controller
             ], 422);
         }
 
-        // Check if receiver is a candidate (candidates can receive messages from employers)
-        $receiver = User::findOrFail($request->receiver_id);
-        if (!$receiver->isCandidate()) {
+        // Check if recipient is a candidate (candidates can receive messages from employers)
+        $recipient = User::findOrFail($request->recipient_id);
+        if (!$recipient->isCandidate()) {
             return response()->json([
                 'success' => false,
                 'message' => 'Messages can only be sent to candidates'
@@ -65,14 +65,14 @@ class MessageController extends Controller
 
         $message = Message::create([
             'sender_id' => Auth::id(),
-            'receiver_id' => $request->receiver_id,
+            'recipient_id' => $request->recipient_id,
             'subject' => $request->subject,
             'message' => $request->message,
             'is_read' => false,
         ]);
 
-        $message->load(['sender:id,first_name,last_name,user_name,profile_image', 
-                        'receiver:id,first_name,last_name,user_name,profile_image']);
+        $message->load(['sender:id,first_name,last_name,user_name,profile_image',
+                        'recipient:id,first_name,last_name,user_name,profile_image']);
 
         return response()->json([
             'success' => true,
@@ -83,17 +83,17 @@ class MessageController extends Controller
 
     public function show($id): JsonResponse
     {
-        $message = Message::with(['sender:id,first_name,last_name,user_name,profile_image', 
-                                  'receiver:id,first_name,last_name,user_name,profile_image'])
+        $message = Message::with(['sender:id,first_name,last_name,user_name,profile_image',
+                                  'recipient:id,first_name,last_name,user_name,profile_image'])
             ->where(function ($query) {
                 $query->where('sender_id', Auth::id())
-                      ->orWhere('receiver_id', Auth::id());
+                      ->orWhere('recipient_id', Auth::id());
             })
             ->findOrFail($id);
 
-        // Mark as read if current user is receiver
-        if ($message->receiver_id === Auth::id()) {
-            $message->update(['is_read' => true]);
+        // Mark as read if current user is recipient
+        if ($message->recipient_id === Auth::id()) {
+            $message->update(['is_read' => true, 'read_at' => now()]);
         }
 
         return response()->json([
@@ -105,18 +105,18 @@ class MessageController extends Controller
     public function conversations(Request $request): JsonResponse
     {
         $authId = Auth::id();
-        
+
         // Get all unique conversations for current user
-        $conversations = Message::with(['sender:id,first_name,last_name,user_name,profile_image', 
-                                         'receiver:id,first_name,last_name,user_name,profile_image'])
+        $conversations = Message::with(['sender:id,first_name,last_name,user_name,profile_image',
+                                         'recipient:id,first_name,last_name,user_name,profile_image'])
             ->where(function ($query) use ($authId) {
                 $query->where('sender_id', $authId)
-                      ->orWhere('receiver_id', $authId);
+                      ->orWhere('recipient_id', $authId);
             })
             ->get()
             ->groupBy(function ($message) use ($authId) {
                 if ($message->sender_id === $authId) {
-                    return 'user_' . $message->receiver_id;
+                    return 'user_' . $message->recipient_id;
                 } else {
                     return 'user_' . $message->sender_id;
                 }
@@ -135,8 +135,8 @@ class MessageController extends Controller
 
     public function markRead($id): JsonResponse
     {
-        $message = Message::where('receiver_id', Auth::id())->findOrFail($id);
-        $message->update(['is_read' => true]);
+        $message = Message::where('recipient_id', Auth::id())->findOrFail($id);
+        $message->update(['is_read' => true, 'read_at' => now()]);
 
         return response()->json([
             'success' => true,
@@ -148,7 +148,7 @@ class MessageController extends Controller
     {
         $message = Message::where(function ($query) {
             $query->where('sender_id', Auth::id())
-                  ->orWhere('receiver_id', Auth::id());
+                  ->orWhere('recipient_id', Auth::id());
         })->findOrFail($id);
 
         $message->delete();

@@ -13,8 +13,8 @@ use Illuminate\Http\JsonResponse;
 
 class ReviewController extends Controller
 {
-    
-    public function companyReviews($companyId)
+
+    public function companyReviews(Request $request, $companyId)
     {
         $reviews = CompanyReview::with('reviewer', 'company.user')
             ->where('company_id', $companyId)
@@ -38,7 +38,7 @@ class ReviewController extends Controller
         ], 'Company reviews retrieved successfully');
     }
 
-    public function candidateReviews($candidateId)
+    public function candidateReviews(Request $request, $candidateId)
     {
         $reviews = CandidateReview::with('reviewer')
             ->where('candidate_id', $candidateId)
@@ -117,10 +117,10 @@ class ReviewController extends Controller
     public function update(Request $request, $id): JsonResponse
     {
         $user = $request->user();
-        
+
         // Try CompanyReview first
         $review = CompanyReview::find($id);
-        
+
         if (!$review) {
             // Try CandidateReview
             $review = CandidateReview::find($id);
@@ -145,19 +145,20 @@ class ReviewController extends Controller
         return $this->success($review, 'Review updated successfully');
     }
 
-    public function destroy($id): JsonResponse
+    public function destroy(Request $request, $id): JsonResponse
     {
         $user = $request->user();
-        
+
         // Try CompanyReview first
         $review = CompanyReview::find($id);
-        
+
         if (!$review) {
             // Try CandidateReview
-            $review = [
-                'success' => false,
-                'message' => 'Review not found'
-            ], 404);
+            $review = CandidateReview::find($id);
+        }
+
+        if (!$review) {
+            return $this->error('Review not found', 404);
         }
 
         if ($review->reviewer_id !== $user->id) {
