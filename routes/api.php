@@ -18,6 +18,8 @@ use App\Http\Controllers\Api\FileController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\BlogController;
+use App\Http\Controllers\Api\AdminController;
+use App\Http\Controllers\Api\ReportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,47 +37,59 @@ Route::prefix('v1')->group(function () {
     // Authentication routes
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
-    
+    Route::post('/password/forgot', [AuthController::class, 'forgotPassword']);
+    Route::post('/password/reset', [AuthController::class, 'resetPassword']);
+    Route::post('/email/verify/{id}/{hash}', [AuthController::class, 'verifyEmail'])->name('verification.verify');
+    Route::post('/email/resend', [AuthController::class, 'resendVerification'])->middleware('throttle:6,1');
+
     // Job routes
-    Route::get('/jobs', [JobController::class, 'index']);
-    Route::get('/jobs/{id}', [JobController::class, 'show']);
+    Route::get('/jobs', [JobController::class, 'index'])->name('jobs.index');
+    Route::get('/jobs/{id}', [JobController::class, 'show'])->name('jobs.show');
     Route::get('/jobs/{id}/related', [JobController::class, 'related']);
-    
+
     // Category routes
     Route::get('/categories', [CategoryController::class, 'index']);
     Route::get('/categories/{id}', [CategoryController::class, 'show']);
-    
+
     // Company routes
-    Route::get('/companies', [CompanyController::class, 'index']);
-    Route::get('/companies/{id}', [CompanyController::class, 'show']);
+    Route::get('/companies', [CompanyController::class, 'index'])->name('companies.index');
+    Route::get('/companies/{id}', [CompanyController::class, 'show'])->name('companies.show');
     Route::get('/companies/{id}/jobs', [CompanyController::class, 'jobs']);
-    
+
     // Candidate routes (public profiles)
-    Route::get('/candidates', [CandidateController::class, 'index']);
-    Route::get('/candidates/{username}', [CandidateController::class, 'show']);
-    
+    Route::get('/candidates', [CandidateController::class, 'index'])->name('candidates.index');
+    Route::get('/candidates/{username}', [CandidateController::class, 'show'])->name('candidates.show');
+
     // Search routes
     Route::get('/search/jobs', [SearchController::class, 'jobs']);
     Route::get('/search/locations', [SearchController::class, 'locations']);
     Route::get('/search/categories', [SearchController::class, 'categories']);
-    
+
     // Newsletter routes
     Route::post('/newsletter/subscribe', [NewsletterController::class, 'subscribe']);
     Route::post('/newsletter/unsubscribe', [NewsletterController::class, 'unsubscribe']);
-    
+
     // Statistics (public)
-    Route::get('/statistics/global', [App\Http\Controllers\Api\StatisticsController::class, 'global']);
-    Route::get('/statistics/jobs', [App\Http\Controllers\Api\StatisticsController::class, 'jobs']);
-    
+    Route::get('/statistics/global', [StatisticsController::class, 'global']);
+    Route::get('/statistics/jobs', [StatisticsController::class, 'jobs']);
+
     // Blog (public)
-    Route::get('/blog', [App\Http\Controllers\Api\BlogController::class, 'index']);
-    Route::get('/blog/categories', [App\Http\Controllers\Api\BlogController::class, 'categories']);
-    Route::get('/blog/{slug}', [App\Http\Controllers\Api\BlogController::class, 'show']);
-    Route::get('/blog/{blogId}/comments', [App\Http\Controllers\Api\BlogController::class, 'getComments']);
-    
+    Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
+    Route::get('/blog/categories', [BlogController::class, 'categories']);
+    Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
+    Route::get('/blog/{blogId}/comments', [BlogController::class, 'getComments']);
+
     // Reviews (public)
-    Route::get('/users/{userId}/reviews/company', [App\Http\Controllers\Api\ReviewController::class, 'companyReviews']);
-    Route::get('/users/{userId}/reviews/candidate', [App\Http\Controllers\Api\ReviewController::class, 'candidateReviews']);
+    Route::get('/users/{userId}/reviews/company', [ReviewController::class, 'companyReviews']);
+    Route::get('/users/{userId}/reviews/candidate', [ReviewController::class, 'candidateReviews']);
+
+    // Public settings
+    Route::get('/settings/public', function () {
+        return response()->json([
+            'success' => true,
+            'data' => \App\Models\Setting::getPublic(),
+        ]);
+    });
 });
 
 // Protected API routes (require authentication)
@@ -176,4 +190,51 @@ Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
     
     // User statistics
     Route::get('/user/statistics', [UserController::class, 'statistics']);
+
+    // User reports
+    Route::post('/reports', [ReportController::class, 'store']);
+    Route::get('/reports/my', [ReportController::class, 'myReports']);
+});
+
+// Admin API routes (require authentication and admin role)
+Route::middleware(['auth:sanctum', 'admin'])->prefix('v1/admin')->group(function () {
+    // Dashboard
+    Route::get('/dashboard', [AdminController::class, 'dashboard']);
+    Route::get('/analytics', [AdminController::class, 'analytics']);
+
+    // User management
+    Route::get('/users', [AdminController::class, 'users']);
+    Route::get('/users/{id}', [AdminController::class, 'showUser']);
+    Route::put('/users/{id}', [AdminController::class, 'updateUser']);
+    Route::post('/users/{id}/ban', [AdminController::class, 'banUser']);
+    Route::post('/users/{id}/unban', [AdminController::class, 'unbanUser']);
+    Route::post('/users/{id}/verify', [AdminController::class, 'verifyUser']);
+    Route::delete('/users/{id}', [AdminController::class, 'deleteUser']);
+
+    // Job management
+    Route::get('/jobs', [AdminController::class, 'jobs']);
+    Route::put('/jobs/{id}/status', [AdminController::class, 'updateJobStatus']);
+    Route::delete('/jobs/{id}', [AdminController::class, 'deleteJob']);
+
+    // Company management
+    Route::get('/companies', [AdminController::class, 'companies']);
+    Route::post('/companies/{id}/verify', [AdminController::class, 'verifyCompany']);
+    Route::delete('/companies/{id}', [AdminController::class, 'deleteCompany']);
+
+    // Report management
+    Route::get('/reports', [AdminController::class, 'reports']);
+    Route::put('/reports/{id}/resolve', [AdminController::class, 'resolveReport']);
+
+    // Audit logs
+    Route::get('/audit-logs', [AdminController::class, 'auditLogs']);
+
+    // Settings
+    Route::get('/settings', [AdminController::class, 'settings']);
+    Route::put('/settings', [AdminController::class, 'updateSettings']);
+
+    // Admin management
+    Route::post('/admins', [AdminController::class, 'createAdmin']);
+
+    // Data export
+    Route::get('/export', [AdminController::class, 'exportData']);
 });
