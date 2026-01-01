@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Laravel\Sanctum\HasApiTokens;
+use App\Notifications\EmailVerificationNotification;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -205,5 +206,64 @@ class User extends Authenticatable implements MustVerifyEmail
         }
 
         return '#';
+    }
+
+    /**
+     * Send the email verification notification.
+     */
+    public function sendEmailVerificationNotification(): void
+    {
+        $this->notify(new EmailVerificationNotification());
+    }
+
+    /**
+     * Update the user's last activity timestamp.
+     */
+    public function touchLastActive(): void
+    {
+        $this->update(['last_active_at' => now()]);
+    }
+
+    /**
+     * Suspend the user account.
+     */
+    public function suspend(?string $reason = null): void
+    {
+        $this->update([
+            'is_suspended' => true,
+            'suspended_at' => now(),
+            'suspension_reason' => $reason,
+        ]);
+
+        // Revoke all tokens
+        $this->tokens()->delete();
+    }
+
+    /**
+     * Activate the user account.
+     */
+    public function activate(): void
+    {
+        $this->update([
+            'is_suspended' => false,
+            'suspended_at' => null,
+            'suspension_reason' => null,
+        ]);
+    }
+
+    /**
+     * Check if the user account is active.
+     */
+    public function isActive(): bool
+    {
+        return !$this->is_suspended && $this->hasVerifiedEmail();
+    }
+
+    /**
+     * Get the user's login history.
+     */
+    public function loginHistory(): HasMany
+    {
+        return $this->hasMany(LoginHistory::class);
     }
 }
