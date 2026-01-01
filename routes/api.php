@@ -32,9 +32,10 @@ use App\Http\Controllers\Api\ReportController;
 |
 */
 
-// Public API routes
-Route::prefix('v1')->group(function () {
-    // Authentication routes
+// ============================================================================
+// RATE-LIMITED AUTHENTICATION ROUTES (Prevent brute force attacks)
+// ============================================================================
+Route::middleware('throttle:5,1')->prefix('v1')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/password/forgot', [AuthController::class, 'forgotPassword']);
@@ -92,46 +93,56 @@ Route::prefix('v1')->group(function () {
     });
 });
 
-// Protected API routes (require authentication)
-Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
+// ============================================================================
+// PROTECTED API ROUTES (Require authentication)
+// ============================================================================
+Route::middleware(['auth:sanctum', 'throttle:60,1'])->prefix('v1')->group(function () {
     // Auth routes
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
-    
+
+    // Email verification (with stricter rate limit)
+    Route::middleware('throttle:6,1')->group(function () {
+        Route::post('/email/verification-notification', [EmailVerificationController::class, 'sendVerificationEmail']);
+        Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])->middleware('signed');
+    });
+
     // User profile management
     Route::get('/user/profile', [UserController::class, 'profile']);
     Route::put('/user/profile', [UserController::class, 'updateProfile']);
     Route::post('/user/profile/image', [UserController::class, 'uploadProfileImage']);
+    Route::post('/user/profile-image', [UserController::class, 'uploadProfileImage']);
     Route::put('/user/password', [UserController::class, 'changePassword']);
+    Route::post('/user/change-password', [UserController::class, 'changePassword']);
     Route::delete('/user/account', [UserController::class, 'deleteAccount']);
     Route::get('/user/statistics', [UserController::class, 'statistics']);
-    
+
     // Candidate profile management
     Route::get('/candidate/profile', [CandidateController::class, 'getProfile']);
     Route::put('/candidate/profile', [CandidateController::class, 'updateProfile']);
     Route::post('/candidate/resume', [CandidateController::class, 'uploadResume']);
     Route::delete('/candidate/resume', [CandidateController::class, 'deleteResume']);
-    
+
     // Job interactions (candidates)
     Route::post('/jobs/{id}/apply', [JobController::class, 'apply']);
     Route::post('/jobs/{id}/save', [JobController::class, 'save']);
     Route::delete('/jobs/{id}/unsave', [JobController::class, 'unsave']);
     Route::get('/user/saved-jobs', [JobController::class, 'savedJobs']);
     Route::get('/user/applied-jobs', [JobController::class, 'appliedJobs']);
-    
+
     // Employer/Company management
     Route::get('/employer/company', [EmployerController::class, 'getCompany']);
     Route::post('/employer/company', [EmployerController::class, 'createCompany']);
     Route::put('/employer/company', [EmployerController::class, 'updateCompany']);
     Route::post('/employer/company/logo', [EmployerController::class, 'uploadLogo']);
     Route::get('/employer/dashboard', [EmployerController::class, 'getDashboard']);
-    
+
     // Employer job management
     Route::get('/employer/jobs', [EmployerController::class, 'getJobs']);
     Route::post('/employer/jobs', [EmployerController::class, 'createJob']);
     Route::put('/employer/jobs/{id}', [EmployerController::class, 'updateJob']);
     Route::delete('/employer/jobs/{id}', [EmployerController::class, 'deleteJob']);
-    
+
     // Application management
     Route::get('/jobs/{jobId}/applications', [ApplicationController::class, 'getJobApplications']);
     Route::get('/applications/{id}', [ApplicationController::class, 'show']);
@@ -140,49 +151,42 @@ Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
     Route::post('/applications/{id}/reject', [ApplicationController::class, 'reject']);
     Route::post('/applications/{id}/accept', [ApplicationController::class, 'accept']);
     Route::delete('/applications/{id}/withdraw', [ApplicationController::class, 'withdraw']);
-    
+
     // Statistics
     Route::get('/statistics/dashboard', [StatisticsController::class, 'dashboard']);
-    Route::get('/statistics/global', [StatisticsController::class, 'global']);
-    Route::get('/statistics/jobs', [StatisticsController::class, 'jobs']);
-    
+
     // Reviews
     Route::post('/reviews', [ReviewController::class, 'store']);
     Route::put('/reviews/{id}', [ReviewController::class, 'update']);
     Route::delete('/reviews/{id}', [ReviewController::class, 'destroy']);
     Route::get('/companies/{companyId}/reviews', [ReviewController::class, 'companyReviews']);
     Route::get('/candidates/{candidateId}/reviews', [ReviewController::class, 'candidateReviews']);
-    
+
     // Blog comments
     Route::post('/blog/{blogId}/comments', [BlogController::class, 'addComment']);
-    Route::get('/blog/{blogId}/comments', [BlogController::class, 'getComments']);
-    
-    // User profile management
-    Route::get('/user/profile', [UserController::class, 'profile']);
-    Route::put('/user/profile', [UserController::class, 'updateProfile']);
-    Route::post('/user/profile-image', [UserController::class, 'uploadProfileImage']);
-    Route::post('/user/change-password', [UserController::class, 'changePassword']);
-    Route::delete('/user/account', [UserController::class, 'deleteAccount']);
-    
+
     // Messages
     Route::get('/messages', [MessageController::class, 'index']);
     Route::post('/messages', [MessageController::class, 'store']);
     Route::get('/messages/{id}', [MessageController::class, 'show']);
     Route::get('/conversations', [MessageController::class, 'conversations']);
-    
-    // File uploads
-    Route::post('/upload/resume', [FileController::class, 'uploadResume']);
-    Route::post('/upload/logo', [FileController::class, 'uploadLogo']);
-    Route::post('/upload/document', [FileController::class, 'uploadDocument']);
-    Route::post('/upload/image', [FileController::class, 'uploadImage']);
-    
+
+    // File uploads (with stricter rate limit)
+    Route::middleware('throttle:20,1')->group(function () {
+        Route::post('/upload/resume', [FileController::class, 'uploadResume']);
+        Route::post('/upload/logo', [FileController::class, 'uploadLogo']);
+        Route::post('/upload/document', [FileController::class, 'uploadDocument']);
+        Route::post('/upload/image', [FileController::class, 'uploadImage']);
+        Route::delete('/upload/delete', [FileController::class, 'deleteFile']);
+    });
+
     // Notifications
     Route::get('/notifications', [NotificationController::class, 'index']);
     Route::get('/notifications/count', [NotificationController::class, 'getCount']);
     Route::put('/notifications/{id}/read', [NotificationController::class, 'markRead']);
     Route::put('/notifications/read-all', [NotificationController::class, 'markAllRead']);
     Route::put('/notifications/settings', [NotificationController::class, 'updateSettings']);
-    
+
     // Dashboard data
     Route::get('/dashboard/stats', [DashboardController::class, 'stats']);
     Route::get('/dashboard/activity', [DashboardController::class, 'activity']);
