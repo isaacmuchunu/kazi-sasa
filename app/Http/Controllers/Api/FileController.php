@@ -222,6 +222,7 @@ class FileController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'path' => 'required|string',
+            'type' => 'required|string|in:resume,logo,profile_image,document',
         ]);
 
         if ($validator->fails()) {
@@ -234,9 +235,36 @@ class FileController extends Controller
 
         try {
             $path = $request->input('path');
-            
-            if (Storage::disk('public')->exists($path)) {
-                Storage::disk('public')->delete($path);
+            $type = $request->input('type');
+            $user = Auth::user();
+
+            // Verify ownership based on file type
+            if (!$this->userOwnsFile($user, $path, $type)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthorized: You do not own this file'
+                ], 403);
+            }
+
+            // Prevent path traversal attacks
+            $path = basename($path);
+            $allowedDirectories = ['resumes', 'company-logos', 'profile-images', 'documents', 'portfolio'];
+            $directory = dirname($request->input('path'));
+
+            if (!in_array($directory, $allowedDirectories)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Invalid file path'
+                ], 400);
+            }
+
+            $fullPath = $directory . '/' . $path;
+
+            if (Storage::disk('public')->exists($fullPath)) {
+                Storage::disk('public')->delete($fullPath);
+
+                // Update the corresponding model to remove the file reference
+                $this->updateModelAfterDeletion($user, $type);
             }
 
             return response()->json([
@@ -249,6 +277,61 @@ class FileController extends Controller
                 'success' => false,
                 'message' => 'Failed to delete file: ' . $e->getMessage()
             ], 500);
+        }
+    }
+
+    /**
+     * Verify that the user owns the file they are trying to delete.
+     */
+    private function userOwnsFile($user, string $path, string $type): bool
+    {
+        switch ($type) {
+            case 'resume':
+                if (!$user->isCandidate() || !$user->candidateProfile) {
+                    return false;
+                }
+                return $user->candidateProfile->resume === $path;
+
+            case 'logo':
+                if (!$user->isEmployer() || !$user->company) {
+                    return false;
+                }
+                return $user->company->logo === $path;
+
+            case 'profile_image':
+                return $user->profile_image === $path;
+
+            case 'document':
+                // For documents, check if the path contains user ID or is in their documents
+                return str_contains($path, (string) $user->id) ||
+                       ($user->candidateProfile && in_array($path, $user->candidateProfile->documents ?? []));
+
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Update the model after file deletion to remove the file reference.
+     */
+    private function updateModelAfterDeletion($user, string $type): void
+    {
+        switch ($type) {
+            case 'resume':
+                if ($user->candidateProfile) {
+                    $user->candidateProfile->update(['resume' => null, 'resume_filename' => null]);
+                }
+                break;
+
+            case 'logo':
+                if ($user->company) {
+                    $user->company->update(['logo' => null]);
+                }
+                break;
+
+            case 'profile_image':
+                $user->update(['profile_image' => null]);
+                break;
         }
     }
 }
