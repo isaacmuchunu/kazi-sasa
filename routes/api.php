@@ -18,9 +18,8 @@ use App\Http\Controllers\Api\FileController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\BlogController;
-use App\Http\Controllers\Api\PasswordResetController;
-use App\Http\Controllers\Api\EmailVerificationController;
-use App\Http\Controllers\Api\AIController;
+use App\Http\Controllers\Api\AdminController;
+use App\Http\Controllers\Api\ReportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,17 +38,14 @@ use App\Http\Controllers\Api\AIController;
 Route::middleware('throttle:5,1')->prefix('v1')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
-    Route::post('/forgot-password', [PasswordResetController::class, 'forgotPassword']);
-    Route::post('/reset-password', [PasswordResetController::class, 'resetPassword']);
-});
+    Route::post('/password/forgot', [AuthController::class, 'forgotPassword']);
+    Route::post('/password/reset', [AuthController::class, 'resetPassword']);
+    Route::post('/email/verify/{id}/{hash}', [AuthController::class, 'verifyEmail'])->name('verification.verify');
+    Route::post('/email/resend', [AuthController::class, 'resendVerification'])->middleware('throttle:6,1');
 
-// ============================================================================
-// PUBLIC API ROUTES (Read-only, higher rate limit)
-// ============================================================================
-Route::middleware('throttle:60,1')->prefix('v1')->group(function () {
     // Job routes
-    Route::get('/jobs', [JobController::class, 'index']);
-    Route::get('/jobs/{id}', [JobController::class, 'show']);
+    Route::get('/jobs', [JobController::class, 'index'])->name('jobs.index');
+    Route::get('/jobs/{id}', [JobController::class, 'show'])->name('jobs.show');
     Route::get('/jobs/{id}/related', [JobController::class, 'related']);
 
     // Category routes
@@ -57,13 +53,13 @@ Route::middleware('throttle:60,1')->prefix('v1')->group(function () {
     Route::get('/categories/{id}', [CategoryController::class, 'show']);
 
     // Company routes
-    Route::get('/companies', [CompanyController::class, 'index']);
-    Route::get('/companies/{id}', [CompanyController::class, 'show']);
+    Route::get('/companies', [CompanyController::class, 'index'])->name('companies.index');
+    Route::get('/companies/{id}', [CompanyController::class, 'show'])->name('companies.show');
     Route::get('/companies/{id}/jobs', [CompanyController::class, 'jobs']);
 
     // Candidate routes (public profiles)
-    Route::get('/candidates', [CandidateController::class, 'index']);
-    Route::get('/candidates/{username}', [CandidateController::class, 'show']);
+    Route::get('/candidates', [CandidateController::class, 'index'])->name('candidates.index');
+    Route::get('/candidates/{username}', [CandidateController::class, 'show'])->name('candidates.show');
 
     // Search routes
     Route::get('/search/jobs', [SearchController::class, 'jobs']);
@@ -79,14 +75,22 @@ Route::middleware('throttle:60,1')->prefix('v1')->group(function () {
     Route::get('/statistics/jobs', [StatisticsController::class, 'jobs']);
 
     // Blog (public)
-    Route::get('/blog', [BlogController::class, 'index']);
+    Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
     Route::get('/blog/categories', [BlogController::class, 'categories']);
-    Route::get('/blog/{slug}', [BlogController::class, 'show']);
+    Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
     Route::get('/blog/{blogId}/comments', [BlogController::class, 'getComments']);
 
     // Reviews (public)
     Route::get('/users/{userId}/reviews/company', [ReviewController::class, 'companyReviews']);
     Route::get('/users/{userId}/reviews/candidate', [ReviewController::class, 'candidateReviews']);
+
+    // Public settings
+    Route::get('/settings/public', function () {
+        return response()->json([
+            'success' => true,
+            'data' => \App\Models\Setting::getPublic(),
+        ]);
+    });
 });
 
 // ============================================================================
@@ -187,105 +191,54 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->prefix('v1')->group(functi
     Route::get('/dashboard/stats', [DashboardController::class, 'stats']);
     Route::get('/dashboard/activity', [DashboardController::class, 'activity']);
     Route::get('/dashboard/recommendations', [DashboardController::class, 'recommendations']);
+    
+    // User statistics
+    Route::get('/user/statistics', [UserController::class, 'statistics']);
 
-    // AI/ML routes
-    Route::prefix('ai')->group(function () {
-        Route::post('/parse-resume', [AIController::class, 'parseResume']);
-        Route::get('/job-matches', [AIController::class, 'getJobMatches']);
-        Route::get('/review-resume', [AIController::class, 'reviewResume']);
-        Route::post('/improvement-suggestions', [AIController::class, 'getImprovementSuggestions']);
-    });
+    // User reports
+    Route::post('/reports', [ReportController::class, 'store']);
+    Route::get('/reports/my', [ReportController::class, 'myReports']);
 });
 
-// ============================================================================
-// ADMIN ROUTES (Require authentication + admin role)
-// ============================================================================
-Route::middleware(['auth:sanctum', 'admin', 'throttle:60,1'])->prefix('v1/admin')->group(function () {
+// Admin API routes (require authentication and admin role)
+Route::middleware(['auth:sanctum', 'admin'])->prefix('v1/admin')->group(function () {
     // Dashboard
-    Route::get('/dashboard', [App\Http\Controllers\Api\Admin\AdminDashboardController::class, 'index']);
-    Route::get('/dashboard/activity', [App\Http\Controllers\Api\Admin\AdminDashboardController::class, 'recentActivity']);
-    Route::get('/dashboard/analytics', [App\Http\Controllers\Api\Admin\AdminDashboardController::class, 'analytics']);
+    Route::get('/dashboard', [AdminController::class, 'dashboard']);
+    Route::get('/analytics', [AdminController::class, 'analytics']);
 
-    // Users management
-    Route::get('/users', [App\Http\Controllers\Api\Admin\AdminUserController::class, 'index']);
-    Route::get('/users/{id}', [App\Http\Controllers\Api\Admin\AdminUserController::class, 'show']);
-    Route::put('/users/{id}', [App\Http\Controllers\Api\Admin\AdminUserController::class, 'update']);
-    Route::delete('/users/{id}', [App\Http\Controllers\Api\Admin\AdminUserController::class, 'destroy']);
-    Route::put('/users/{id}/suspend', [App\Http\Controllers\Api\Admin\AdminUserController::class, 'suspend']);
-    Route::put('/users/{id}/activate', [App\Http\Controllers\Api\Admin\AdminUserController::class, 'activate']);
-    Route::put('/users/{id}/verify', [App\Http\Controllers\Api\Admin\AdminUserController::class, 'verify']);
+    // User management
+    Route::get('/users', [AdminController::class, 'users']);
+    Route::get('/users/{id}', [AdminController::class, 'showUser']);
+    Route::put('/users/{id}', [AdminController::class, 'updateUser']);
+    Route::post('/users/{id}/ban', [AdminController::class, 'banUser']);
+    Route::post('/users/{id}/unban', [AdminController::class, 'unbanUser']);
+    Route::post('/users/{id}/verify', [AdminController::class, 'verifyUser']);
+    Route::delete('/users/{id}', [AdminController::class, 'deleteUser']);
 
-    // Companies management
-    Route::get('/companies', [App\Http\Controllers\Api\Admin\AdminCompanyController::class, 'index']);
-    Route::get('/companies/pending', [App\Http\Controllers\Api\Admin\AdminCompanyController::class, 'pending']);
-    Route::get('/companies/{id}', [App\Http\Controllers\Api\Admin\AdminCompanyController::class, 'show']);
-    Route::put('/companies/{id}', [App\Http\Controllers\Api\Admin\AdminCompanyController::class, 'update']);
-    Route::put('/companies/{id}/verify', [App\Http\Controllers\Api\Admin\AdminCompanyController::class, 'verify']);
-    Route::put('/companies/{id}/reject', [App\Http\Controllers\Api\Admin\AdminCompanyController::class, 'reject']);
-    Route::delete('/companies/{id}', [App\Http\Controllers\Api\Admin\AdminCompanyController::class, 'destroy']);
+    // Job management
+    Route::get('/jobs', [AdminController::class, 'jobs']);
+    Route::put('/jobs/{id}/status', [AdminController::class, 'updateJobStatus']);
+    Route::delete('/jobs/{id}', [AdminController::class, 'deleteJob']);
 
-    // Jobs management
-    Route::get('/jobs', [App\Http\Controllers\Api\Admin\AdminJobController::class, 'index']);
-    Route::get('/jobs/pending', [App\Http\Controllers\Api\Admin\AdminJobController::class, 'pending']);
-    Route::get('/jobs/{id}', [App\Http\Controllers\Api\Admin\AdminJobController::class, 'show']);
-    Route::put('/jobs/{id}', [App\Http\Controllers\Api\Admin\AdminJobController::class, 'update']);
-    Route::put('/jobs/{id}/approve', [App\Http\Controllers\Api\Admin\AdminJobController::class, 'approve']);
-    Route::put('/jobs/{id}/reject', [App\Http\Controllers\Api\Admin\AdminJobController::class, 'reject']);
-    Route::put('/jobs/{id}/featured', [App\Http\Controllers\Api\Admin\AdminJobController::class, 'toggleFeatured']);
-    Route::delete('/jobs/{id}', [App\Http\Controllers\Api\Admin\AdminJobController::class, 'destroy']);
+    // Company management
+    Route::get('/companies', [AdminController::class, 'companies']);
+    Route::post('/companies/{id}/verify', [AdminController::class, 'verifyCompany']);
+    Route::delete('/companies/{id}', [AdminController::class, 'deleteCompany']);
 
-    // Categories management
-    Route::get('/categories', [App\Http\Controllers\Api\Admin\AdminCategoryController::class, 'index']);
-    Route::post('/categories', [App\Http\Controllers\Api\Admin\AdminCategoryController::class, 'store']);
-    Route::get('/categories/{id}', [App\Http\Controllers\Api\Admin\AdminCategoryController::class, 'show']);
-    Route::put('/categories/{id}', [App\Http\Controllers\Api\Admin\AdminCategoryController::class, 'update']);
-    Route::delete('/categories/{id}', [App\Http\Controllers\Api\Admin\AdminCategoryController::class, 'destroy']);
-
-    // Blog management
-    Route::get('/blogs', [App\Http\Controllers\Api\Admin\AdminBlogController::class, 'index']);
-    Route::post('/blogs', [App\Http\Controllers\Api\Admin\AdminBlogController::class, 'store']);
-    Route::get('/blogs/{id}', [App\Http\Controllers\Api\Admin\AdminBlogController::class, 'show']);
-    Route::put('/blogs/{id}', [App\Http\Controllers\Api\Admin\AdminBlogController::class, 'update']);
-    Route::put('/blogs/{id}/publish', [App\Http\Controllers\Api\Admin\AdminBlogController::class, 'publish']);
-    Route::delete('/blogs/{id}', [App\Http\Controllers\Api\Admin\AdminBlogController::class, 'destroy']);
-
-    // Reviews moderation
-    Route::get('/reviews', [App\Http\Controllers\Api\Admin\AdminReviewController::class, 'index']);
-    Route::get('/reviews/pending', [App\Http\Controllers\Api\Admin\AdminReviewController::class, 'pending']);
-    Route::put('/reviews/{id}/approve', [App\Http\Controllers\Api\Admin\AdminReviewController::class, 'approve']);
-    Route::put('/reviews/{id}/reject', [App\Http\Controllers\Api\Admin\AdminReviewController::class, 'reject']);
-    Route::delete('/reviews/{id}', [App\Http\Controllers\Api\Admin\AdminReviewController::class, 'destroy']);
-
-    // Comments moderation
-    Route::get('/comments', [App\Http\Controllers\Api\Admin\AdminCommentController::class, 'index']);
-    Route::get('/comments/pending', [App\Http\Controllers\Api\Admin\AdminCommentController::class, 'pending']);
-    Route::put('/comments/{id}/approve', [App\Http\Controllers\Api\Admin\AdminCommentController::class, 'approve']);
-    Route::put('/comments/{id}/reject', [App\Http\Controllers\Api\Admin\AdminCommentController::class, 'reject']);
-    Route::delete('/comments/{id}', [App\Http\Controllers\Api\Admin\AdminCommentController::class, 'destroy']);
-
-    // Applications overview
-    Route::get('/applications', [App\Http\Controllers\Api\Admin\AdminApplicationController::class, 'index']);
-    Route::get('/applications/stats', [App\Http\Controllers\Api\Admin\AdminApplicationController::class, 'stats']);
-
-    // Reports
-    Route::get('/reports/users', [App\Http\Controllers\Api\Admin\AdminReportController::class, 'users']);
-    Route::get('/reports/jobs', [App\Http\Controllers\Api\Admin\AdminReportController::class, 'jobs']);
-    Route::get('/reports/applications', [App\Http\Controllers\Api\Admin\AdminReportController::class, 'applications']);
-    Route::get('/reports/companies', [App\Http\Controllers\Api\Admin\AdminReportController::class, 'companies']);
-    Route::get('/reports/overview', [App\Http\Controllers\Api\Admin\AdminReportController::class, 'overview']);
-    Route::get('/reports/export/{type}', [App\Http\Controllers\Api\Admin\AdminReportController::class, 'export']);
-
-    // Settings
-    Route::get('/settings', [App\Http\Controllers\Api\Admin\AdminSettingsController::class, 'index']);
-    Route::put('/settings', [App\Http\Controllers\Api\Admin\AdminSettingsController::class, 'update']);
-    Route::get('/settings/{group}', [App\Http\Controllers\Api\Admin\AdminSettingsController::class, 'group']);
+    // Report management
+    Route::get('/reports', [AdminController::class, 'reports']);
+    Route::put('/reports/{id}/resolve', [AdminController::class, 'resolveReport']);
 
     // Audit logs
-    Route::get('/audit-logs', [App\Http\Controllers\Api\Admin\AdminAuditController::class, 'index']);
-    Route::get('/audit-logs/{id}', [App\Http\Controllers\Api\Admin\AdminAuditController::class, 'show']);
+    Route::get('/audit-logs', [AdminController::class, 'auditLogs']);
 
-    // Newsletter management
-    Route::get('/newsletter/subscribers', [App\Http\Controllers\Api\Admin\AdminNewsletterController::class, 'subscribers']);
-    Route::post('/newsletter/send', [App\Http\Controllers\Api\Admin\AdminNewsletterController::class, 'send']);
-    Route::get('/newsletter/campaigns', [App\Http\Controllers\Api\Admin\AdminNewsletterController::class, 'campaigns']);
+    // Settings
+    Route::get('/settings', [AdminController::class, 'settings']);
+    Route::put('/settings', [AdminController::class, 'updateSettings']);
+
+    // Admin management
+    Route::post('/admins', [AdminController::class, 'createAdmin']);
+
+    // Data export
+    Route::get('/export', [AdminController::class, 'exportData']);
 });
