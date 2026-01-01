@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Services\JobMatchingService;
+use App\Services\RecommendationService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
@@ -15,10 +17,15 @@ use App\Models\Message;
 
 class DashboardController extends Controller
 {
+    public function __construct(
+        private JobMatchingService $jobMatchingService,
+        private RecommendationService $recommendationService
+    ) {}
+
     public function stats(Request $request): JsonResponse
     {
         $user = Auth::user();
-        
+
         if ($user->isCandidate()) {
             return $this->candidateStats($user);
         } elseif ($user->isEmployer()) {
@@ -42,7 +49,7 @@ class DashboardController extends Controller
         $savedJobs = $user->savedJobs()->count();
         $totalApplications = array_sum($applications);
         $acceptedApplications = $applications['accepted'] ?? 0;
-        
+
         // Calculate profile completion
         $profileCompletion = $this->calculateCandidateProfileCompletion($user);
 
@@ -61,6 +68,16 @@ class DashboardController extends Controller
                 ];
             });
 
+        // Get profile views (if tracked)
+        $profileViews = $user->candidateProfile?->views_count ?? 0;
+
+        // Get match rate (applications that resulted in interviews/callbacks)
+        $interviewCount = $applications['interview'] ?? 0;
+        $shortlistedCount = $applications['shortlisted'] ?? 0;
+        $matchRate = $totalApplications > 0
+            ? round((($interviewCount + $shortlistedCount) / $totalApplications) * 100)
+            : 0;
+
         return response()->json([
             'success' => true,
             'data' => [
@@ -69,6 +86,8 @@ class DashboardController extends Controller
                     'accepted_applications' => $acceptedApplications,
                     'saved_jobs' => $savedJobs,
                     'profile_completion' => $profileCompletion,
+                    'profile_views' => $profileViews,
+                    'match_rate' => $matchRate,
                     'application_status' => $applications
                 ],
                 'recent_activity' => $recentApplications
@@ -79,7 +98,7 @@ class DashboardController extends Controller
     private function employerStats($user): JsonResponse
     {
         $company = $user->company;
-        
+
         if (!$company) {
             return response()->json([
                 'success' => false,
@@ -87,32 +106,42 @@ class DashboardController extends Controller
             ], 404);
         }
 
-        $jobs = $user->jobs()->withCount('applications')->get();
+        $jobs = $company->jobs()->withCount('applications')->get();
         $totalJobs = $jobs->count();
         $activeJobs = $jobs->where('status', 'active')->count();
         $totalApplications = $jobs->sum('applications_count');
-        
-        // Application status breakdown
-        $applicationsByStatus = $user->jobApplications()
+
+        // Application status breakdown across all company jobs
+        $applicationsByStatus = JobApplication::whereHas('job', function ($query) use ($company) {
+                $query->where('company_id', $company->id);
+            })
             ->selectRaw('status, count(*) as count')
             ->groupBy('status')
             ->pluck('count', 'status')
             ->toArray();
 
         // Recent activity
-        $recentApplications = $user->jobApplications()
-            ->with(['candidate:id,first_name,last_name', 'job:id,title'])
+        $recentApplications = JobApplication::whereHas('job', function ($query) use ($company) {
+                $query->where('company_id', $company->id);
+            })
+            ->with(['user:id,first_name,last_name', 'job:id,title'])
             ->latest()
             ->take(5)
             ->get()
             ->map(function ($application) {
                 return [
                     'type' => 'new_application',
-                    'message' => "{$application->candidate->first_name} {$application->candidate->last_name} applied to {$application->job->title}",
+                    'message' => "{$application->user->first_name} {$application->user->last_name} applied to {$application->job->title}",
                     'created_at' => $application->created_at,
                     'status' => $application->status
                 ];
             });
+
+        // Calculate hiring metrics
+        $hiredCount = $applicationsByStatus['hired'] ?? 0;
+        $hireRate = $totalApplications > 0
+            ? round(($hiredCount / $totalApplications) * 100)
+            : 0;
 
         return response()->json([
             'success' => true,
@@ -122,6 +151,7 @@ class DashboardController extends Controller
                     'active_jobs' => $activeJobs,
                     'total_applications' => $totalApplications,
                     'company_profile_completion' => $this->calculateCompanyProfileCompletion($company),
+                    'hire_rate' => $hireRate,
                     'application_status' => $applicationsByStatus
                 ],
                 'recent_activity' => $recentApplications
@@ -132,8 +162,8 @@ class DashboardController extends Controller
     public function activity(Request $request): JsonResponse
     {
         $user = Auth::user();
-        $limit = $request->get('limit', 20);
-        
+        $limit = min($request->get('limit', 20), 100);
+
         if ($user->isCandidate()) {
             $activities = $this->getCandidateActivity($user)->take($limit);
         } elseif ($user->isEmployer()) {
@@ -151,7 +181,7 @@ class DashboardController extends Controller
     public function recommendations(Request $request): JsonResponse
     {
         $user = Auth::user();
-        
+
         if ($user->isCandidate()) {
             return $this->getCandidateRecommendations($user);
         } elseif ($user->isEmployer()) {
@@ -166,82 +196,76 @@ class DashboardController extends Controller
 
     private function getCandidateRecommendations($user): JsonResponse
     {
-        // Get user's search preferences from applications
-        $appliedJobs = $user->jobApplications()
-            ->with('job:id,job_category_id,location,experience_level')
-            ->get()
-            ->pluck('job');
-
-        // Find similar jobs
-        $categoryIds = $appliedJobs->pluck('job_category_id')->unique();
-        $locations = $appliedJobs->pluck('location')->unique();
-        
-        $recommendedJobs = Job::with('company')
-            ->where('status', 'active')
-            ->whereIn('job_category_id', $categoryIds)
-            ->orWhereIn('location', $locations)
-            ->whereNotIn('id', $user->jobApplications()->pluck('job_id'))
-            ->whereNotIn('id', $user->savedJobs()->pluck('job_id'))
-            ->latest()
-            ->take(10)
-            ->get()
-            ->map(function ($job) {
-                return [
-                    'id' => $job->id,
-                    'title' => $job->title,
-                    'company' => $job->company->name,
-                    'location' => $job->location,
-                    'category' => $job->category->name,
-                    'salary_range' => $job->salary_range,
-                    'job_type' => $job->job_type,
-                    'posted_date' => $job->created_at->diffForHumans(),
-                    'match_score' => $this->calculateMatchScore($job)
-                ];
-            });
+        // Use AI-powered recommendation service
+        $recommendations = $this->recommendationService->getJobRecommendations($user, 10);
 
         return response()->json([
             'success' => true,
-            'data' => $recommendedJobs
+            'data' => $recommendations
         ]);
     }
 
     private function getEmployerRecommendations($user): JsonResponse
     {
-        // Recommend candidates based on job similarity
-        $companyJobs = $user->jobs()->with(['applications.candidate'])->get();
-        
-        $topCandidates = collect([]);
-        
-        if ($companyJobs->isNotEmpty()) {
-            // Get candidates who applied to similar jobs
-            $candidateIds = $companyJobs->pluck('applications.*.candidate_id')->flatten()->unique();
-            
+        $company = $user->company;
+
+        if (!$company) {
+            return response()->json([
+                'success' => true,
+                'data' => []
+            ]);
+        }
+
+        // Get recommendations for the most recent active job
+        $activeJob = $company->jobs()
+            ->where('status', 'active')
+            ->latest()
+            ->first();
+
+        if (!$activeJob) {
+            // Fallback: show top candidates overall
             $topCandidates = User::where('user_type', 'candidate')
-                ->whereIn('id', $candidateIds)
-                ->with(['candidateProfile', 'jobApplications' => function ($query) use ($companyJobs) {
-                    $query->whereIn('job_id', $companyJobs->pluck('id'));
-                }])
+                ->whereHas('candidateProfile')
+                ->with('candidateProfile')
+                ->where('last_active_at', '>=', now()->subDays(30))
+                ->orderByDesc('last_active_at')
+                ->limit(10)
                 ->get()
-                ->map(function ($candidate) use ($companyJobs) {
+                ->map(function ($candidate) {
                     return [
                         'id' => $candidate->id,
                         'name' => $candidate->full_name,
+                        'username' => $candidate->user_name,
                         'location' => $candidate->location,
                         'job_title' => $candidate->job_title,
                         'experience_years' => $candidate->experience_years,
-                        'applications_count' => $candidate->jobApplications->count(),
-                        'skills' => $candidate->candidateProfile->skills ?? [],
-                        'profile_completion' => $this->calculateCandidateProfileCompletion($candidate)
+                        'skills' => array_slice($candidate->candidateProfile->skills ?? [], 0, 5),
+                        'profile_completion' => $this->calculateCandidateProfileCompletion($candidate),
+                        'last_active' => $candidate->last_active_at?->diffForHumans(),
                     ];
-                })
-                ->sortByDesc('applications_count')
-                ->take(10)
-                ->values();
+                });
+
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'candidates' => $topCandidates,
+                    'message' => 'Post a job to get AI-matched candidate recommendations',
+                ]
+            ]);
         }
+
+        // Use AI-powered recommendation service
+        $recommendations = $this->recommendationService->getCandidateRecommendations($activeJob, 10);
 
         return response()->json([
             'success' => true,
-            'data' => $topCandidates
+            'data' => [
+                'for_job' => [
+                    'id' => $activeJob->id,
+                    'title' => $activeJob->title,
+                ],
+                'recommendations' => $recommendations,
+            ]
         ]);
     }
 
@@ -258,24 +282,25 @@ class DashboardController extends Controller
             'experience_years',
             'bio'
         ];
-        
+
         $completed = 0;
+        $total = count($fields) + 4; // +4 for profile fields
         $profile = $user->candidateProfile;
-        
+
         foreach ($fields as $field) {
             if (!empty($user->$field)) {
                 $completed++;
             }
         }
-        
+
         if ($profile) {
             if ($profile->resume) $completed++;
             if (!empty($profile->skills)) $completed++;
             if (!empty($profile->education)) $completed++;
             if (!empty($profile->experience)) $completed++;
         }
-        
-        return min(100, round(($completed / count($fields)) * 100));
+
+        return min(100, round(($completed / $total) * 100));
     }
 
     private function calculateCompanyProfileCompletion($company): int
@@ -290,31 +315,33 @@ class DashboardController extends Controller
             'phone',
             'email'
         ];
-        
+
         $completed = 0;
-        
+        $total = count($fields) + 1; // +1 for logo
+
         foreach ($fields as $field) {
             if (!empty($company->$field)) {
                 $completed++;
             }
         }
-        
+
         if ($company->logo) $completed++;
-        
-        return min(100, round(($completed / count($fields)) * 100));
+
+        return min(100, round(($completed / $total) * 100));
     }
 
-    private function calculateMatchScore($job): int
+    /**
+     * Calculate match score using AI service.
+     */
+    public function calculateMatchScore(User $candidate, Job $job): int
     {
-        // Simulate match score calculation
-        // In reality, this would involve complex matching algorithms
-        return rand(70, 95);
+        return $this->jobMatchingService->calculateMatchScore($candidate, $job);
     }
 
-    private function getCandidateActivity($user): \Illuminate\Database\Eloquent\Collection
+    private function getCandidateActivity($user): \Illuminate\Support\Collection
     {
         return $user->jobApplications()
-            ->with('job:id,title')
+            ->with('job:id,title,slug')
             ->latest()
             ->get()
             ->map(function ($application) {
@@ -322,6 +349,7 @@ class DashboardController extends Controller
                     'type' => 'application',
                     'title' => 'Job Application',
                     'message' => "Applied to {$application->job->title}",
+                    'job_slug' => $application->job->slug,
                     'created_at' => $application->created_at,
                     'status' => $application->status,
                     'icon' => 'briefcase'
@@ -329,21 +357,71 @@ class DashboardController extends Controller
             });
     }
 
-    private function getEmployerActivity($user): \Illuminate\Database\Eloquent\Collection
+    private function getEmployerActivity($user): \Illuminate\Support\Collection
     {
-        return $user->jobApplications()
-            ->with(['candidate:id,first_name,last_name', 'job:id,title'])
+        $company = $user->company;
+
+        if (!$company) {
+            return collect([]);
+        }
+
+        return JobApplication::whereHas('job', function ($query) use ($company) {
+                $query->where('company_id', $company->id);
+            })
+            ->with(['user:id,first_name,last_name,user_name', 'job:id,title,slug'])
             ->latest()
             ->get()
             ->map(function ($application) {
                 return [
                     'type' => 'new_application',
                     'title' => 'New Application',
-                    'message' => "{$application->candidate->first_name} {$application->candidate->last_name} applied to {$application->job->title}",
+                    'message' => "{$application->user->first_name} {$application->user->last_name} applied to {$application->job->title}",
+                    'candidate_username' => $application->user->user_name,
+                    'job_slug' => $application->job->slug,
                     'created_at' => $application->created_at,
                     'status' => $application->status,
                     'icon' => 'user-plus'
                 ];
             });
+    }
+
+    /**
+     * Get quick stats for the dashboard header.
+     */
+    public function quickStats(Request $request): JsonResponse
+    {
+        $user = Auth::user();
+
+        if ($user->isCandidate()) {
+            $stats = [
+                'applications' => $user->jobApplications()->count(),
+                'saved_jobs' => $user->savedJobs()->count(),
+                'profile_views' => $user->candidateProfile?->views_count ?? 0,
+                'unread_messages' => Message::where('recipient_id', $user->id)
+                    ->whereNull('read_at')
+                    ->count(),
+            ];
+        } elseif ($user->isEmployer()) {
+            $company = $user->company;
+            $stats = [
+                'active_jobs' => $company ? $company->jobs()->where('status', 'active')->count() : 0,
+                'total_applications' => $company ? JobApplication::whereHas('job', function ($q) use ($company) {
+                    $q->where('company_id', $company->id);
+                })->count() : 0,
+                'new_applications' => $company ? JobApplication::whereHas('job', function ($q) use ($company) {
+                    $q->where('company_id', $company->id);
+                })->where('status', 'pending')->count() : 0,
+                'unread_messages' => Message::where('recipient_id', $user->id)
+                    ->whereNull('read_at')
+                    ->count(),
+            ];
+        } else {
+            $stats = [];
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $stats,
+        ]);
     }
 }

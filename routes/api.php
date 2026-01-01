@@ -20,6 +20,7 @@ use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\BlogController;
 use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\ReportController;
+use App\Http\Controllers\Api\AIController;
 
 /*
 |--------------------------------------------------------------------------
@@ -191,13 +192,49 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->prefix('v1')->group(functi
     Route::get('/dashboard/stats', [DashboardController::class, 'stats']);
     Route::get('/dashboard/activity', [DashboardController::class, 'activity']);
     Route::get('/dashboard/recommendations', [DashboardController::class, 'recommendations']);
-    
+    Route::get('/dashboard/quick-stats', [DashboardController::class, 'quickStats']);
+
     // User statistics
     Route::get('/user/statistics', [UserController::class, 'statistics']);
 
     // User reports
     Route::post('/reports', [ReportController::class, 'store']);
     Route::get('/reports/my', [ReportController::class, 'myReports']);
+
+    // ============================================================================
+    // AI/ML POWERED FEATURES
+    // ============================================================================
+    Route::prefix('ai')->group(function () {
+        // Job recommendations for candidates
+        Route::get('/job-recommendations', [AIController::class, 'getJobRecommendations']);
+
+        // Candidate recommendations for employers (for a specific job)
+        Route::get('/jobs/{job}/candidate-recommendations', [AIController::class, 'getCandidateRecommendations']);
+
+        // Match score between candidate and job
+        Route::get('/jobs/{job}/match-score', [AIController::class, 'getJobMatchScore']);
+
+        // CV/Resume parsing and analysis
+        Route::get('/cv/parse', [AIController::class, 'parseCV']);
+        Route::post('/cv/upload-and-parse', [AIController::class, 'uploadAndParseCV']);
+
+        // Skill analysis
+        Route::get('/skills/analysis', [AIController::class, 'getSkillAnalysis']);
+        Route::get('/skills/trending', [AIController::class, 'getTrendingSkills']);
+        Route::get('/jobs/{job}/skill-gap', [AIController::class, 'getSkillGap']);
+
+        // Similar jobs
+        Route::get('/jobs/{job}/similar', [AIController::class, 'getSimilarJobs']);
+
+        // Category recommendations
+        Route::get('/category-recommendations', [AIController::class, 'getCategoryRecommendations']);
+
+        // Candidate comparison (for employers)
+        Route::post('/candidates/compare', [AIController::class, 'compareSkills']);
+
+        // Candidate-Job match (for employers)
+        Route::post('/match', [AIController::class, 'getCandidateJobMatch']);
+    });
 });
 
 // Admin API routes (require authentication and admin role)
