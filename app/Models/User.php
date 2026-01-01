@@ -2,16 +2,18 @@
 
 namespace App\Models;
 
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasApiTokens;
 
     /**
      * The attributes that are mass assignable.
@@ -40,6 +42,9 @@ class User extends Authenticatable
         'is_verified',
         'last_active_at',
         'email_verified_at',
+        'is_suspended',
+        'suspended_at',
+        'suspension_reason',
     ];
 
     /**
@@ -65,7 +70,9 @@ class User extends Authenticatable
             'dob' => 'date',
             'social_links' => 'array',
             'is_verified' => 'boolean',
+            'is_suspended' => 'boolean',
             'last_active_at' => 'datetime',
+            'suspended_at' => 'datetime',
             'experience_years' => 'integer',
         ];
     }
@@ -164,6 +171,15 @@ class User extends Authenticatable
     public function isAdmin(): bool
     {
         return $this->user_type === 'admin';
+    }
+
+    /**
+     * Check if user is a super admin (first admin or specifically marked).
+     */
+    public function isSuperAdmin(): bool
+    {
+        // Super admin is either the first admin user or has a specific flag
+        return $this->user_type === 'admin' && ($this->id === 1 || $this->is_super_admin);
     }
 
     /**
